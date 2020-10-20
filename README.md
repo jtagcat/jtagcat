@@ -59,7 +59,7 @@ That's not all. Besides tabs, I have todos in:
      - qwerty, without doing any specific stuff, 80-100wpm is nice, but any non-letter/number stuff like `{}\`` and more take way too long to type.. colemak seems to be a sane solution, but I do 5-10wpm, what at the point of thinking at 150-250wpm is not satisfactory at all ;; finding qmk, but on software level would be very nice.. ahk is not available for linux, other things I haven't had the chance to look in to.. I have a keyboard running on qmk, but I haven't taken the time to make benefit of it (also I don't always have a mech kb, I have softw)
      - organize the remaining ff bookmarks (other than the visible bookmarks bar, and 'typein' (things I know, and can access by searching for them), bookmarks are almost useless.. you could argue, that I am using tabs as bookmarks, but I don't feel they are the same
      - buy pens, am out of them
-     - make a kali installation on a seprate ssd, idk about how I would access my other stuff if I will need them on ctfs
+     - make a kali installation on a separate ssd, idk about how I would access my other stuff if I will need them on CTFs.
      - audit wardrobe — there's no backup for daily pants, ⅓ of the shirts seem to be just gone, main and secondary hoodie would also be nice, or some hybrid of something that can show the t-shirt below.. shroud neck / having a built-in scarf is quite a must
      - distro hopping v3..
      - get a hw upgrade — current is just frankly not satisfactory
