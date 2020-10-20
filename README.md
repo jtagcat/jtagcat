@@ -13,9 +13,11 @@ That's not great. I used to have gh open daily, but now it's more often every wh
 Experience says I either reply instantly, or in 6 months. Though, submitted MRs get magically express delivery.
 
 Here's my stale gh notifications:
+
 ![](/cpmy/notifications-oct-20-2020.png)
 
 Here're some stats I did of tabs 'open':
+
 ![](/cpmy/slack-anonimized-tab-stonks-1-sep-28.png)
 ![](/cpmy/slack-anonimized-tab-stonks-2-sep-28.png)
 
