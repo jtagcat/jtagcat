@@ -64,8 +64,18 @@ That's not all. Besides tabs, I have todos in:
      - surface (more open) / ipad + pen for digital notes: no idea if allowed at sch, but the current implementation I have on paper doesn't cut it, flipping out a laptop doesn't always work, and sometimes I don't have the time to find that character I don't have the name of (otherwise, I'm quite good at using unicode to my advantage)
      - find a doc I was referred to, book a time
  - Thunderbird, the second profile, RSS/Atom/JSON/XML/etc web feeds.
-   - #TODO:
- - GitHub, as mentioned before.
+   - Social medias, Twitter, Instagram, Youtube, and Reddit arrive via feeds. They are heavily filtered and sorted.
+   - Of the hundreds of feeds, I would highlight:
+     - jlelse
+     - Beaker
+     - Mango PDF
+     - Privacytools
+     - Linuxserver
+     - Fedora Magazine
+     - GitLab
+     - StackOverflow
+     - Microsoft Research
+- GitHub, as mentioned before.
  - GitLab, also personal:
    - Overall larger todos, 261/308 issues open.
    - Ideas, partial migration from Joplin, 15 open.
@@ -110,10 +120,7 @@ That's not all. Besides tabs, I have todos in:
    - Exhibit A, books. I carry one with me daily as a solid backup for "if all else more needy fail". So far, I haven't opened it. At least I tried.
    - There's around 10 projects / objects of interest waiting.
 
-So this reflection gave me a better overview for myself well, thanks.
-
-#TODO: in thunderbird
-
+So this reflection gave me a better overview for myself well, thanks. Should probably proceed to drink, eat, and sleep for the first time today.
 
 <!--
 **jtagcat/jtagcat** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
@@ -129,4 +136,3 @@ Here are some ideas to get you started:
 - 😄 Pronouns: ...
 - ⚡ Fun fact: ...
 -->
-
