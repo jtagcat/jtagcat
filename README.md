@@ -128,16 +128,16 @@ So this reflection gave me a better overview for myself well, thanks. Should pro
 ***
 
 Ah yes, something in the style of a CV: (attempt 6 or 8)
- - Active member of K-Space. Moved far away, thus haven't had the chance to participate as actively. The times I do visit, things get done switftly due to prior systemization and goals.
+ - Active member of K-Space. Moved far away, thus haven't had the chance to participate as actively. The times I do visit, things get done swiftly due to prior systematization and goals.
  - Thing I choose to hide due to privacy.
  - 4-6 things I can't tell you about.
- - Things I don't remember. Not having a reason to remember things irrelevnat at the time is quite a factor. I don't exactly remember what I did today.
+ - Things I don't remember. Not having a reason to remember things irrelevant at the time is quite a factor. I don't exactly remember what I did today.
  - Things not relevant.
 
 ### CTFs
-1. Persistant tester for Rangeforce's Cyber Sieges. Frequently blue teaming, there have been some red teaming. Usually get about half or more of the things secured. Have also gone off-mission, tooling myself, as no significant pressure is present.
+1. Persistent tester for Rangeforce's Cyber Sieges. Frequently blue teaming, there have been some red teaming. Usually get about half or more of the things secured. Have also gone off-mission, tooling myself, as no significant pressure is present.
 1. Kübernaaskel 2020 tester. Red team. Got a few flags, don't remember if first or second within the small group. Didn't feel smart.
-1. First place on Cyber Arch's Telia CTF 2020 with team Compose+Duck+No, the second team of DuckDuckNo. I understood the challanges, and strived towards getting flags. Didn't personally capture any flags, but assisted the team, while sometimes intentionally obvious, other times not, spying on DDN. Credit for flags and switft execution goes to @raoz.
+1. First place on Cyber Arch's Telia CTF 2020 with team Compose+Duck+No, the second team of DuckDuckNo. I understood the challenges, and strived towards getting flags. Didn't personally capture any flags, but assisted the team, while sometimes intentionally obvious, other times not, spying on DDN. Credit for flags and swift execution goes to @raoz.
 
 <!--
 **jtagcat/jtagcat** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
