@@ -127,7 +127,7 @@ So this reflection gave me a better overview for myself well, thanks. Should pro
 
 ***
 
-Ah yes, something in the style of a CV: (attempt 6 or 8)
+Ah yes, something in the style of a CV: (attempt 6 or 8 (probably 6, since brain is more likely rounding to powers of 2)
  - Active member of K-Space. Moved far away, thus haven't had the chance to participate as actively. The times I do visit, things get done swiftly due to prior systematization and goals.
  - Thing I choose to hide due to privacy.
  - 4-6 things I can't tell you about.
