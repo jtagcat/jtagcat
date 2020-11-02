@@ -139,6 +139,21 @@ Ah yes, something in the style of a CV: (attempt 6 or 8 (probably 6, since brain
 1. Kübernaaskel 2020 tester. Red team. Got a few flags, don't remember if first or second within the small group. Didn't feel smart.
 1. First place on Cyber Arch's Telia CTF 2020 with team Compose+Duck+No, the second team of DuckDuckNo. I understood the challenges, and strived towards getting flags. Didn't personally capture any flags, but assisted the team, while sometimes intentionally obvious, other times not, spying on DDN. Credit for flags and swift execution goes to @raoz.
 
+### Things people have told me to list
+ - Sysadmin skills
+   - I don't really know what people mean by this. I'll just say I've
+ - Docker
+   - Working with pre-made containers. Hooking them up, troubleshooting, since Early 2018, late 2017, I think?
+   - Writing Dockerfiles. Out of own need to have it to have everything hosted in one place — convenience, somewhat more secure, for the occasions there's some horrible thing with horrible dependencies, that only works on x, but x has y what is not acceptable, and something from somewhere else. Since q1 or q2 of 2020.
+   - General shitstorm.
+ - Static sites.
+
+### Things I guess myself, are nice to list
+ - Git.. I can do a lot, but I still feel there're things I could do better, as some things seem with sanity too time-intensive. Usage since 2016-2017 I think? Not sure at all. Since 2019, have gone further than (fork,) clone, checkout, edit thing, add, commit, push. If anything went slightly wrong, I copy-pastad to an another file and nuked the whole thing, starting fresh from git clone.
+ - In-depth knowledge about a wide range of tech. Ability to discuss how something is best done, finding superior solutions.
+
+Help, what else have I done? I can't remember!
+
 <!--
 **jtagcat/jtagcat** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
