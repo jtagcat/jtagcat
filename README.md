@@ -168,3 +168,7 @@ Here are some ideas to get you started:
 - 😄 Pronouns: ...
 - ⚡ Fun fact: ...
 -->
+
+***
+
+A status update may be found on [c7](//www.c7.ee/status/2020-11-09/).
