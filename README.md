@@ -11,3 +11,9 @@ The bio doesn't have git history, so let's plop it here as well:
 A datahoarder, a tabhoarder, packaged in one.
 Researching (any), critiquing (UX, design, psy), tinkering around (labbing), married to data, sound and language.
 ```
+
+***
+
+Random things:
+'When jc touches your product.'
+![image](https://user-images.githubusercontent.com/38327267/115150188-d7051c00-a056-11eb-8f95-4832b0ba3748.png)
