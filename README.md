@@ -15,5 +15,5 @@ Researching (any), critiquing (UX, design, psy), tinkering around (labbing), mar
 ***
 
 Random things:
-'When jc touches your product.'
+'When jc touches your product.'  
 ![image](https://user-images.githubusercontent.com/38327267/115150188-d7051c00-a056-11eb-8f95-4832b0ba3748.png)
