@@ -22,20 +22,25 @@ esac
 
 # prepare
 git init "$VCDIR"
+#git "--git-dir=$VCDIR/.git" "--work-tree=$VCDIR" reset --hard HEAD
 
 # loop through files
 ls -Art "$INPUTDIR" | grep -v '^ *#' | while IFS= read -r backupinput
 do
+  echo "$backupinput"
   # prepare
   rm -rf "$OUT" # we can't just overwrite, as some groups change id-s and some groups get deleted
   mkdir "$OUT"
+  # hacks to make the file valid (ignoring errors is not acceptable :))
+  sed -i '/openerTabId/d' "$INPUTDIR/$backupinput" # The original files tend to not add a comma before openerTabId, since it's unwanted anyway, drop it.
+  sed -i ':a;N;$!ba;s/,\n                }/\n                }/g' "$INPUTDIR/$backupinput" # some entries end with commas, though they shouldn't
   # split a file
-  jq --raw-output 'del(.groups,.autoBackupLastBackupTimeStamp,.containers,.pinnedTabs)' "$INPUTDIR/$backupinput" > "$OUT/_.json"
+  jq --raw-output 'del(.groups,.lastCreatedGroupPosition,.autoBackupLastBackupTimeStamp,.containers,.pinnedTabs)' "$INPUTDIR/$backupinput" > "$OUT/_.json"
   jq --raw-output '.pinnedTabs' "$INPUTDIR/$backupinput" > "$OUT/_pinnedTabs.json"
-  jq --compact-output --raw-output '(del(.groups)) as $parent|.groups[]|{"filename":"\(.id).json","content":(.|del(.id,.tabs[].thumbnail,.tabs[].cookieStoreId)|@base64)}|"\(.filename):\(.content)"' "$INPUTDIR/$backupinput" |\
+  jq --compact-output --raw-output '(del(.groups)) as $parent|.groups[]|{"filename":"\(.id).json","content":(.|del(.id,.tabs[].thumbnail,.tabs[].favIconUrl,.tabs[].iconUrl,.tabs[].cookieStoreId,.tabs[].openerTabId)|@base64)}|"\(.filename):\(.content)"' "$INPUTDIR/$backupinput" |\
   grep -v '^ *#' | while IFS=: read -r filename content
   do
-    base64 -d <<< "$content" | jq '{"tabs":(.tabs | sort_by(.id))} + del(.tabs)' > "$OUT/$filename"
+    base64 -d <<< "$content" | jq '{"tabs":(.tabs | sort_by(.id))} + del(.tabs) | del(.tabs[].id)' > "$OUT/$filename" # sort by id, then get rid of the id
   done
   # commit the files
   git "--git-dir=$VCDIR/.git" "--work-tree=$VCDIR" add -A
