@@ -1,0 +1,3 @@
+﻿#InstallKeybdHook
+keyhistory
+msgbox, keyhistory
