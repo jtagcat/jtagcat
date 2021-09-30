@@ -27,6 +27,7 @@
  - https://www.janestreet.com ¹
  - https://github.com ¹,²,³
  - https://tailscale.com ¹,(²),³
+ - https://rsync.net ²
 
 ### Starting to fall off the list
 Something I dislike has demoted it here.
