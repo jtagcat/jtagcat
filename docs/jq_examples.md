@@ -119,3 +119,29 @@ done
 #### Output
 
 #TODO:
+
+### Get top-level keys of an object
+#### Input
+```json
+{
+  "listened_at": 1616112420,
+  "track_metadata": {
+    "additional_info": {
+      "listening_from": "spotify"
+    },
+    "artist_name": "Heinrich Kaminski",
+    "track_name": "Maria durch ein Dornwald ging"
+  }
+}
+```
+#### Command
+```sh
+jq 'keys'
+```
+#### Output
+```json
+[
+  "listened_at",
+  "track_metadata"
+]
+```
