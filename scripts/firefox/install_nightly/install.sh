@@ -27,6 +27,7 @@ popd >> /dev/null
 xdg-desktop-menu install --mode $mode mozilla-firefox_nightly.desktop 
 xdg-desktop-menu install --mode $mode mozilla-firefox_nightly_always_profileman.desktop 
 
+mkdir -p ~/.local/bin
 ln -s ~/.opt/firefox/firefox ~/.local/bin/ff
 
 # application-x-reaper for defaults?
