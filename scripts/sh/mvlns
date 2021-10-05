@@ -1,0 +1,29 @@
+#!/bin/sh
+set -e
+
+# mv file ../dir/newname
+# ln -s ../dir/newname file
+#
+# mv bar/foo bar ~/dir
+# ln -s ~/dir/foo bar/foo
+# ln -s ~/
+#
+# does NOT handle
+#      ~/      /home/x/
+# mvlns dir/file ../x/
+# symlink ~/dir/file will point to ~/x
+
+for last; do true; done # https://stackoverflow.com/a/1853993
+
+for arg; do
+if [ "$arg" != "$last" ]; then # don't use the last or same-named arg
+	mv -- "$arg" "$last"
+	if [ -d "$last" ]; then
+		linkto="$last/${arg##*/}"
+	else
+		linkto="$last"
+	fi
+	ln -s -- "$linkto" "$arg"
+fi
+done
+
