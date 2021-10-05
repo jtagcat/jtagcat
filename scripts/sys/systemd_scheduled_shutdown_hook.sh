@@ -5,7 +5,7 @@
 
 # env: CHATIDS: tg chat id(s)
 # env: SSHHOSTS: ssh user@host
-GTT="gtt.c7.ee"
+# env: TELEGRAM_BOT_TOKEN
 
 # SSH: assuming ssh keys are available. DO restrict the system user you hopefully created.
 # export user=otherhost_shutdown_hook && sudo adduser --system --shell /usr/local/bin/lish --disabled-password --disabled-login $user && git clone https://github.com/jschauma/lish.git && cd lish && sudo make install && cd .. && rm -rf lish && sudo mkdir /etc/lish && echo 'sudo /sbin/shutdown now' | sudo tee /etc/lish/$user && sudo mkdir "/home/$user/.ssh" && vim "/home/$user/.ssh/authorized_keys" && chmod 700 "/home/$user/.ssh" && chmod 600 "/home/$user/.ssh/authorized_keys"
@@ -29,7 +29,6 @@ while IFS=, read -r eventfile event; do
                     cur_epoch="$(date +%s)"
                     epoch_seconds_left="$(( epoch - cur_epoch ))"
                     msg=": ${mode} in ${epoch_seconds_left}s, ${epoch_date}; Shutdown initiated on ${SSHHOSTS}"
-                    msg_raw="${msg// /%20}"
 
                     for ssh_host in ${SSHHOSTS}; do
                         ssh "${ssh_host}" sudo /sbin/shutdown now
@@ -40,7 +39,8 @@ while IFS=, read -r eventfile event; do
                     ;;
         esac
         for chatid in ${CHATIDS}; do
-            curl "https://${GTT}/${chatid}?message=$(hostname)%20scheduled%20shutdown%20${event}${msg_raw}"
+	    curl -X POST -H 'Content-Type: application/json' -d "{\"chat_id\": \"${chatid}\", \"text\": \"$(hostname) scheduled shutdown ${event}${msg}\"}" https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage
+	    curl -X POST -H 'Content-Type: application/json' -d "{\"chat_id\": \"${chatid}\", \"text\": \"$(curl  -m10 https://7xx.arti.ee/plain)\", \"disable_notification\": true}" https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/sendMessage &
         done
     fi
 done
