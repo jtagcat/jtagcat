@@ -23,6 +23,7 @@ if [ "$arg" != "$last" ]; then # don't use the last or same-named arg
 	else
 		linkto="$last"
 	fi
+	if [ -f "$last" ]; then linkto="$last";fi
 	ln -s -- "$linkto" "$arg"
 fi
 done
