@@ -1,0 +1,5 @@
+#!/bin/bash
+while read line; do
+                $2 "$line" $3
+done <"$1"
+
