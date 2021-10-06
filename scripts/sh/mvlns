@@ -8,10 +8,13 @@ set -e
 # ln -s ~/dir/foo bar/foo
 # ln -s ~/
 #
+#TODO:
 # does NOT handle
 #      ~/      /home/x/
 # mvlns dir/file ../x/
 # symlink ~/dir/file will point to ~/x
+# (absolute path will be no for an answer)
+# (maybe cd in and back to the directory, and add dots per directory change (count `/`)
 
 for last; do true; done # https://stackoverflow.com/a/1853993
 
@@ -19,11 +22,11 @@ for arg; do
 if [ "$arg" != "$last" ]; then # don't use the last or same-named arg
 	mv -- "$arg" "$last"
 	if [ -d "$last" ]; then
-		linkto="$last/${arg##*/}"
+		linkto="$(sed 's/\/$//' <<< "$last")/${arg##*/}"
 	else
 		linkto="$last"
 	fi
-	if [ -f "$last" ]; then linkto="$last";fi
+	if [ ! -f "$last" ]; then linkto="$last";fi
 	ln -s -- "$linkto" "$arg"
 fi
 done
