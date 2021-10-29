@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e
+
+basedir="/f/git/tmp"
+if [ -z ${var+x} ]
+then clonedir="$basedir/$(basename "$1" .git)"
+else clonedir="$basedir/$2"; fi
+
+if [[ ! -s "$clonedir" ]] # -s nonzero size 'file'
+then git clone -j8 "$1" "$clonedir"; fi
+
+echo "$clonedir" # can't cd, only subshell will cd, and then exit
+echo "codium $clonedir && exit"
+
+
