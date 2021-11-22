@@ -9,7 +9,6 @@
  - https://torproject.org (³)
  - https://elisa.ee ¹
  - https://k-space.ee ¹
- - https://whimsical.com don't remember
  - https://www.liqid.com ¹,³
  - https://oxide.computer ¹,²,³
  - https://ferrous-systems.com ⁴
@@ -28,6 +27,7 @@
  - https://github.com ¹,²,³
  - https://tailscale.com ¹,(²),³
  - https://rsync.net ²
+ - https://krakul.eu ⁴
 
 ### Starting to fall off the list
 Something I dislike has demoted it here.
