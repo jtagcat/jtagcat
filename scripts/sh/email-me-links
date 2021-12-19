@@ -13,10 +13,18 @@ read -p 'Directory to save files: ' filesdirectory # where are we doing stuff?
 mkdir -p $filesdirectory
 touch $filesdirectory/.index # get urls
 $EDITOR $filesdirectory/.index
-url="$(head -n1 "$filesdirectory/.index")"
+first="$(head -n1 "$filesdirectory/.index")"
+url="$(cut -d¤ -f2 <<< "$first")"
+if [[ "$url" == "" ]]; then
+	url="$(cut -d¤ -f1 <<< "$first")"
+else
+	date="$(cut -d¤ -f1 <<< "$first")"
+        echo "first date: $(date -R -u -d "$date")"
+fi
 title="$(wget -qO- "$url" | hq '`${/html/head/title}`')"
 echo "Title of first is: $title"
 read -p 'String to remove from end of title: ' removesuffix
+unset date url
 counter=0
 while IFS="¤" read date url; do
 	((counter++))

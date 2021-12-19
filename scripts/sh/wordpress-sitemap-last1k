@@ -1,0 +1,2 @@
+#!/bin/sh
+curl -s "$1" | xq -r '.urlset.url[] | "\(.lastmod)¤\(.loc)"' -
