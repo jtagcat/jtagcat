@@ -8,7 +8,7 @@
 backloc="$1"
 #hidelist="$2" # how to implement?
 
-file="$backloc"/"$(ls -Art "$backloc" | tail -n 1)"
+file="$backloc"/"$(exa --sort=new "$backloc" | tail -n 1)"
 datebase="$(rev <<< "$file" | cut -d@ -f 2 | cut -d- -f 1-4 | rev)" # rev implementation not needed anymore, retains compatability with different backup nameschemes.
 stgepoch="$(date -d "$(echo "$(cut -d~ -f 1 <<< "$datebase")"T"$(cut -d~ -f 2 <<< "$datebase" | sed "s/-/:/")+00:00")" "+%s")"
 epochdiff="$(echo "$(date "+%s")"-"$stgepoch" | bc)"
