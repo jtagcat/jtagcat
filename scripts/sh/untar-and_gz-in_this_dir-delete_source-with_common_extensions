@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+for extension in .tar .tar.gz; do
+	if compgen -G "*${extension}" > /dev/null; then # don't fail if no matches for glob
+		for filename in *"$extension"; do
+		echo "extracting $filename"
+		tar xf "$filename" && rm -- "$filename"
+done; fi; done
