@@ -1,0 +1,4 @@
+#!/bin/sh
+while read parturl; do
+	wordpress-sitemap-last1k "$parturl"
+done <<< "$(curl -s "$1" | xq -r '.sitemapindex.sitemap[].loc' -)"
