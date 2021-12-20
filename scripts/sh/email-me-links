@@ -23,6 +23,7 @@ else
 fi
 title="$(wget -qO- "$url" | hq '`${/html/head/title}`')"
 echo "Title of first is: $title"
+read -p 'String to remove from beginning of title: ' removeprefix
 read -p 'String to remove from end of title: ' removesuffix
 unset date url
 counter=0
@@ -36,7 +37,8 @@ while IFS="¤" read date url; do
 	echo "From: $from" >> $filesdirectory/$counter.eml
 	echo "MIME-Version: 1.0" >> $filesdirectory/$counter.eml
 	fullpagetitle="$(wget -qO- "$url" | hq '`${/html/head/title}`' )"
-	pagetitle="${fullpagetitle%$removesuffix}"
+	prepagetitle="${fullpagetitle#"$removeprefix"}"
+	pagetitle="${prepagetitle%"$removesuffix"}"
 	echo "Subject: $pagetitle" >> $filesdirectory/$counter.eml
 	echo Content-Transfer-Encoding: 8bit >> $filesdirectory/$counter.eml
 	echo "Content-Base: $url" >> $filesdirectory/$counter.eml # shows up as 'website'
