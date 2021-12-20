@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -u
 
 # takes in a list of URLs, optionally with date (in csv with dumb seperator ¤)
 # outputs .eml files that can be mass-imported by Thunderbird ImportExportTools NG
@@ -9,10 +10,11 @@
 
 echo "1st: date, 2nd: url OR 1st: url"
 echo "seperator is ¤"
-read -p 'Directory to save files: ' filesdirectory # where are we doing stuff?
-mkdir -p $filesdirectory
-touch $filesdirectory/.index # get urls
-$EDITOR $filesdirectory/.index
+read -rp 'Directory to save files: ' filesdirectory # where are we doing stuff?
+mkdir -p "$filesdirectory"
+touch "$filesdirectory/.index" # get urls
+$EDITOR "$filesdirectory/.index"
+
 first="$(head -n1 "$filesdirectory/.index")"
 url="$(cut -d¤ -f2 <<< "$first")"
 if [[ "$url" == "" ]]; then
@@ -23,26 +25,32 @@ else
 fi
 title="$(wget -qO- "$url" | hq '`${/html/head/title}`')"
 echo "Title of first is: $title"
-read -p 'String to remove from beginning of title: ' removeprefix
-read -p 'String to remove from end of title: ' removesuffix
+IFS= read -rp 'String to remove from beginning of title: ' removeprefix
+IFS= read -rp 'String to remove from end of title: ' removesuffix
 unset date url
+
 counter=0
-while IFS="¤" read date url; do
+while IFS="¤" read -r date url; do
 	((counter++))
+
+	from=$(echo "$url" | sed -e "s/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/") # domain part
+
+	pagetitle="$(wget -qO- "$url" | hq '`${/html/head/title}`' )"
+	pagetitle="${pagetitle#"$removeprefix"}"
+	pagetitle="${pagetitle%"$removesuffix"}"
+
 	if [[ "$url" == ""  ]]; then # no date, only url (1st field)
 		url="$date"
 		date="Thu, 01 Jan 1970 00:00:01 +0000"
 	fi
-	from=$(echo "$url" | sed -e "s/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/") # get domain
-	echo "From: $from" >> $filesdirectory/$counter.eml
-	echo "MIME-Version: 1.0" >> $filesdirectory/$counter.eml
-	fullpagetitle="$(wget -qO- "$url" | hq '`${/html/head/title}`' )"
-	prepagetitle="${fullpagetitle#"$removeprefix"}"
-	pagetitle="${prepagetitle%"$removesuffix"}"
-	echo "Subject: $pagetitle" >> $filesdirectory/$counter.eml
-	echo Content-Transfer-Encoding: 8bit >> $filesdirectory/$counter.eml
-	echo "Content-Base: $url" >> $filesdirectory/$counter.eml # shows up as 'website'
-	echo 'Content-Type: text/html; charset=UTF-8' >> $filesdirectory/$counter.eml
-	d2="$(date -R -u -d "$date")"
-	echo "Date: $d2" >> $filesdirectory/$counter.eml
+	date="$(date -R -u -d "$date")"
+	{
+	echo "From: $from"
+	echo "MIME-Version: 1.0"
+	echo "Subject: $pagetitle"
+	echo "Content-Transfer-Encoding: 8bit"
+	echo "Content-Base: $url" # shows up as website in Thunderbird
+	echo 'Content-Type: text/html; charset=UTF-8'
+	echo "Date: $date"
+	} > "$filesdirectory/$counter.eml"
 done < "$filesdirectory/.index"
