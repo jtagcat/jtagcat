@@ -7,3 +7,11 @@ I spent 6 months using it, it's just dumb. Even 'just works' things don't work.
 
 #TODO: add iconnect scripts etc
 #TODO: add concrete points.
+
+## starspammers
+repos I unstarred because of mail spam
+
+### kuwala
+ - what I starred, unrelated to spammers: https://github.com/airbytehq/airbyte/
+ - spammer: @floriankuwala @mattigrthr @kuwala-io https://github.com/kuwala-io/kuwala
+ - type: sales pitch, marketing
