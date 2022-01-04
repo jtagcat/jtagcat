@@ -1,0 +1,6 @@
+#!/bin/sh
+set -e
+#git remote add upstream $(read -p "What's the upstream (fork's master) git url? ")
+git fetch upstream
+git checkout master
+git merge upstream/master
