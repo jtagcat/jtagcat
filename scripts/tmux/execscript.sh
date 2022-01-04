@@ -13,7 +13,7 @@ if [ -d "${outdir}/.git" ]; then
 	fi
 	"${scriptloc}" "${outdir}" || exit 0 # will error if no tmux session
 	git -C "${outdir}" add -- . >> /dev/null # no -q available
-	git -C "${outdir}" commit -qm'autoflush'
+	git -C "${outdir}" commit -qm'autoflush' || true # if nothing has changed
 else
 	mkdir "${outdir}"
 	git init "${outdir}"
