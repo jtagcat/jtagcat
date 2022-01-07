@@ -4,7 +4,7 @@
  
  - https://backblaze.com ¹,²,³
  - https://synology.com ³
- - https://gitlab.com ²,(³)
+ - https://gitlab.com ²
  - https://migadu.com ²
  - https://torproject.org (³)
  - https://elisa.ee ¹
