@@ -1,34 +1,34 @@
  # Interesting companies
- Companies, that have my interest in their business¹, their way of business², their product³, or something else⁴.  
- This is somewhat a list of _'cool'_ companies, and/or companies doing cool things.
+Companies, that have my interest on their business[^biz], their way of business[^way], their product[^prod], or something else[^etc].  
+This is somewhat a list of _'cool'_ companies, and/or companies doing cool things.
  
- - https://backblaze.com ¹,²,³
- - https://synology.com ³
- - https://gitlab.com ²
- - https://migadu.com ²
- - https://torproject.org (³)
- - https://elisa.ee ¹
- - https://k-space.ee ¹
- - https://www.liqid.com ¹,³
- - https://oxide.computer ¹,²,³
- - https://ferrous-systems.com ⁴
- - https://fractory.com ⁴
- - https://www.desktopmetal.com ³
- - https://riot.vc ³
- - https://pos.toasttab.com ³ 
- - https://sensel.com ³
- - https://zone.eu ¹,²
- - https://qminder.com ¹,⁴
- - https://www.douxmatok.com ³
- - https://microsoft.com ¹,²,(³),⁴
- - https://shiokmeats.com ³
- - https://www.defactosound.com ³,⁴
- - https://www.janestreet.com ¹
- - https://github.com ¹,²,³
- - https://tailscale.com ¹,(²),³
- - https://rsync.net ²
- - https://krakul.eu ⁴
- - https://www.cybereason.com 
+ - https://backblaze.com [^biz],[^way],[^prod]
+ - https://synology.com [^prod]
+ - https://gitlab.com [^way]
+ - https://migadu.com [^way]
+ - https://torproject.org ([^prod])
+ - https://elisa.ee [^biz]
+ - https://k-space.ee [^biz]
+ - https://www.liqid.com [^biz],[^prod]
+ - https://oxide.computer [^biz],[^way],[^prod]
+ - https://ferrous-systems.com [^etc]
+ - https://fractory.com [^etc]
+ - https://www.desktopmetal.com [^prod]
+ - https://riot.vc [^prod]
+ - https://pos.toasttab.com [^prod] 
+ - https://sensel.com [^prod]
+ - https://zone.eu [^biz],[^way]
+ - https://qminder.com [^biz],[^etc]
+ - https://www.douxmatok.com [^prod]
+ - https://microsoft.com [^biz],[^way],([^prod]),[^etc]
+ - https://shiokmeats.com [^prod]
+ - https://www.defactosound.com [^prod],[^etc]
+ - https://www.janestreet.com [^biz]
+ - https://github.com [^biz],[^way],[^prod]
+ - https://tailscale.com [^biz],([^way]),[^prod]
+ - https://rsync.net [^way]
+ - https://krakul.eu [^etc]
+ - https://www.cybereason.com [^prod]
 
 ### Starting to fall off the list
 Something I dislike has demoted it here.
@@ -48,3 +48,9 @@ Didn't stand the test of time.
  - https://stacc.ee
  - https://ubiquiti.com
  - https://spotify.com
+
+
+[^biz]: their business
+[^way]: their way of business
+[^prod]: their product
+[^etc]: something else
