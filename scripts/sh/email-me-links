@@ -8,10 +8,22 @@ set -u
 
 # from https://unix.stackexchange.com/a/7012/389250
 
-echo "1st: date, 2nd: url OR 1st: url"
-echo "seperator is ¤"
-read -rp 'Directory to save files: ' filesdirectory # where are we doing stuff?
+case "$?" in
+	0)
+		read -rp 'Directory to save files: ' filesdirectory # where are we doing stuff?
+		;;
+	1)
+		filesdirectory="$1"
+		;;
+	*)
+		echo "Up to 1 arguments expected, got $?"
+		echo "Usage: email-me-links [output_directory]"
+		;;
+esac
 mkdir -p "$filesdirectory"
+
+echo "1st: date, 2nd: url; OR 1st: url"
+echo "seperator is ¤"
 touch "$filesdirectory/.index" # get urls
 $EDITOR "$filesdirectory/.index"
 
@@ -24,7 +36,7 @@ else
         echo "first date: $(date -R -u -d "$date")"
 fi
 title="$(wget -qO- "$url" | hq '`${/html/head/title}`')"
-echo "Title of first is: $title"
+echo "Title of first is: ${title}"
 IFS= read -rp 'String to remove from beginning of title: ' removeprefix
 IFS= read -rp 'String to remove from end of title: ' removesuffix
 unset date url
@@ -32,17 +44,17 @@ unset date url
 counter=0
 while IFS="¤" read -r date url; do
 	((counter++))
-
-	from=$(echo "$url" | sed -e "s/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/") # domain part
-
-	pagetitle="$(wget -qO- "$url" | hq '`${/html/head/title}`' )"
-	pagetitle="${pagetitle#"$removeprefix"}"
-	pagetitle="${pagetitle%"$removesuffix"}"
-
 	if [[ "$url" == ""  ]]; then # no date, only url (1st field)
 		url="$date"
 		date="Thu, 01 Jan 1970 00:00:01 +0000"
 	fi
+
+	from=$(echo "$url" | sed -e "s/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/") # domain part
+
+	pagetitle="$(wget -qO- "$url" | hq '`${/html/head/title}`' )"
+	pagetitle="${pagetitle#"${removeprefix}"}"
+	pagetitle="${pagetitle%"${removesuffix}"}"
+
 	date="$(date -R -u -d "$date")"
 	{
 	echo "From: $from"
