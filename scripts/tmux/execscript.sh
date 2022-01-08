@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+#TODO: implement locking with timeouts
 
 scriptloc="${1}"
 basepath="${2}"
@@ -13,7 +14,7 @@ if [ -d "${outdir}/.git" ]; then
 	fi
 	"${scriptloc}" "${outdir}" || exit 0 # will error if no tmux session
 	git -C "${outdir}" add -- . >> /dev/null # no -q available
-	git -C "${outdir}" commit -qm'autoflush' || true # if nothing has changed
+	git -C "${outdir}" commit -qm'autoflush' --allow-empty || true # if nothing has changed
 else
 	mkdir "${outdir}"
 	git init "${outdir}"
