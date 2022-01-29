@@ -29,6 +29,7 @@ This is somewhat a list of _'cool'_ companies, and/or companies doing cool thing
  - https://rsync.net [^way]
  - https://krakul.eu [^etc]
  - https://www.cybereason.com [^prod]
+ - https://https://bandcamp.com [^biz], [^etc]
 
 ### Starting to fall off the list
 Something I dislike has demoted it here.
