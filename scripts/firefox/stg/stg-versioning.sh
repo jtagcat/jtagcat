@@ -1,4 +1,6 @@
 #!/bin/bash
+## DO NOT USE ##
+
 set -e
 # vars
 VCDIR="$1"
