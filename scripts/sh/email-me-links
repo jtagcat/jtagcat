@@ -35,7 +35,7 @@ else
 	date="$(cut -d¤ -f1 <<< "$first")"
         echo "first date: $(date -R -u -d "$date")"
 fi
-title="$(wget -qO- "$url" | hq '`${/html/head/title}`')"
+title="$(curl -sL "$url" | htmlq -t title)"
 echo "Title of first is: ${title}"
 IFS= read -rp 'String to remove from beginning of title: ' removeprefix
 IFS= read -rp 'String to remove from end of title: ' removesuffix
@@ -51,7 +51,7 @@ while IFS="¤" read -r date url; do
 
 	from=$(echo "$url" | sed -e "s/[^/]*\/\/\([^@]*@\)\?\([^:/]*\).*/\2/") # domain part
 
-	pagetitle="$(wget -qO- "$url" | hq '`${/html/head/title}`' )"
+  pagetitle="$(curl -sL "$url" | htmlq -t title)"
 	pagetitle="${pagetitle#"${removeprefix}"}"
 	pagetitle="${pagetitle%"${removesuffix}"}"
 
