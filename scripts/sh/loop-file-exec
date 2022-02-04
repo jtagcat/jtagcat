@@ -1,5 +1,14 @@
 #!/bin/bash
-while read line; do
+case "$#" in
+  2|3)
+    true
+    ;;
+  *)
+    echo "Usage: loop-file-exec <newline_file> <string before line> [string after line]"
+    echo pipes unsupported
+    exit 1
+    ;;
+esac
+while read -r line; do
                 $2 "$line" $3
 done <"$1"
-
