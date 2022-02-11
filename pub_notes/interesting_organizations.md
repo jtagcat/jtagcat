@@ -1,4 +1,4 @@
- # Interesting companies
+ # Interesting organizations
 Companies, that have my interest on their business[^biz], their way of business[^way], their product[^prod], or something else[^etc].  
 This is somewhat a list of _'cool'_ companies, and/or companies doing cool things.
  
@@ -30,6 +30,7 @@ This is somewhat a list of _'cool'_ companies, and/or companies doing cool thing
  - https://krakul.eu [^etc]
  - https://www.cybereason.com [^prod]
  - https://https://bandcamp.com [^biz], [^etc]
+ - https://archive.org [^biz], [^way], [^prod], [^etc]
 
 ### Starting to fall off the list
 Something I dislike has demoted it here.
