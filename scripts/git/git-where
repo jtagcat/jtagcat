@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -eou pipefail
+
+git remote get-url "$(git remote | tail -n1)"
+
