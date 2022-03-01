@@ -8,7 +8,7 @@ set -u
 
 # from https://unix.stackexchange.com/a/7012/389250
 
-case "$?" in
+case "$#" in
 	0)
 		read -rp 'Directory to save files: ' filesdirectory # where are we doing stuff?
 		;;
