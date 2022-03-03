@@ -31,6 +31,7 @@ This is somewhat a list of _'cool'_ companies, and/or companies doing cool thing
  - https://www.cybereason.com [^prod]
  - https://https://bandcamp.com [^biz], [^etc]
  - https://archive.org [^biz], [^way], [^prod], [^etc]
+ - https://www.valvesoftware.com/en/ [^way], [^prod]
 
 ### Starting to fall off the list
 Something I dislike has demoted it here.
