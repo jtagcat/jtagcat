@@ -33,6 +33,7 @@ This is somewhat a list of _'cool'_ companies, and/or companies doing cool thing
  - https://archive.org [^biz], [^way], [^prod], [^etc]
  - https://www.valvesoftware.com/en/ [^way], [^prod]
  - https://www.mythic-ai.com/ [^etc] (they make analogue processing chips, more resilient against ✨ space radiation 🌌 and a method of accelleration relying on 📈 physics)
+ - https://linusmediagroup.com [^way], [^etc]
 
 ### Starting to fall off the list
 Something I dislike has demoted it here.
