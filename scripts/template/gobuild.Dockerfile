@@ -10,7 +10,6 @@ RUN go mod download
 
 # https://github.com/docker/docker.github.io/issues/14609
 # TODO: remove 2nd line if you have '.go' files in only root of project
-# TODO: remove 2st line if you have '.go' files in subdirectories, also root
 COPY *.go ./
 COPY **/*.go ./
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app
@@ -25,4 +24,3 @@ RUN git config --global --add safe.directory '*'
 
 COPY --from=builder /wd/app ./
 CMD ["./app"]
-# Can't automagically change 'app' to package name. https://github.com/moby/moby/issues/29110
