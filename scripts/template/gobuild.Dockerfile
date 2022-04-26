@@ -19,8 +19,8 @@ FROM alpine
 # TODO: change URL:
 LABEL org.opencontainers.image.source="https://github.com/jtagcat/CHANGEME"
 WORKDIR /wd
-RUN apk add --no-cache git
-RUN git config --global --add safe.directory '*'
+#RUN apk add --no-cache git
+#RUN git config --global --add safe.directory '*'
 
 COPY --from=builder /wd/app ./
 CMD ["./app"]
