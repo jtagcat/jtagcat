@@ -9,7 +9,7 @@ COPY go.mod go.sum ./
 RUN go mod download
 
 # https://github.com/docker/docker.github.io/issues/14609
-# TODO: remove 2nd line if you have '.go' files in only root of project
+# TODO: comment 2nd line if you have '.go' files in only root of project
 COPY *.go ./
 COPY **/*.go ./
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app
