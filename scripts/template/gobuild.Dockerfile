@@ -11,7 +11,7 @@ RUN go mod download
 # https://github.com/docker/docker.github.io/issues/14609
 # TODO: comment 2nd line if you have '.go' files in only root of project
 COPY *.go ./
-COPY **/*.go ./
+COPY . ./
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app
 
 # https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
