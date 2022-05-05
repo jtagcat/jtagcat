@@ -5,9 +5,9 @@ func ParseLines(input io.Reader) (output []string, _ error) {
 
 	scanner := bufio.NewScanner(input)
 	for i := 1; scanner.Scan(); i++ {
-		line, linenum := scanner.Text(), i
+		linenum := linenum // https://golang.org/doc/faq#closures_and_goroutines
 		g.Go(func() error {
-			return parseLineSingle(line, linenum, reschan)
+			return parseLineSingle(scanner.Text(), linenum, reschan)
 		})
 	}
 
