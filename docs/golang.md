@@ -6,7 +6,9 @@ func ParseLines(input io.Reader) (output []string, _ error) {
 	scanner := bufio.NewScanner(input)
 	for i := 1; scanner.Scan(); i++ {
 		line, linenum := scanner.Text(), i
-		g.Go(parseLineSingle(line, linenum, reschan))
+		g.Go(func() error {
+			return parseLineSingle(line, linenum, reschan)
+		})
 	}
 
 	var readOK sync.Mutex
