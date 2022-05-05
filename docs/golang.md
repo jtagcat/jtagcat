@@ -1,13 +1,13 @@
-## Parallel unbuffered processing
+## Parallel line-by-line processing from `io.Reader` using unbuffered channels.
 ```go
 func ParseLines(input io.Reader) (output []string, _ error) {
 	g, reschan := new(errgroup.Group), make(chan string)
 
 	scanner := bufio.NewScanner(input)
 	for i := 1; scanner.Scan(); i++ {
-		linenum := linenum // https://golang.org/doc/faq#closures_and_goroutines
+		line, linenum := scanner.Text(), linenum // https://golang.org/doc/faq#closures_and_goroutines
 		g.Go(func() error {
-			return parseLineSingle(scanner.Text(), linenum, reschan)
+			return parseLineSingle(line, linenum, reschan)
 		})
 	}
 
