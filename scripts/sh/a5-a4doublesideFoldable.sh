@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/usr/bin/env bash
+set -eou pipefail
 # AUTHOR: jtagcat
 # LICENCE:  GPL3
 
@@ -18,3 +19,4 @@ fi
 t="$(mktemp)"
 pdfjam -q --booklet true --page a4paper --landscape --nup 2x1 "$1" -o "$t"
 pdftk "$t" rotate oddDown output "$2"
+rm "$t"
