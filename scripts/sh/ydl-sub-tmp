@@ -6,7 +6,7 @@ if [[ "$#" != 1 ]];then
         echo err: give me id
 else
         t="$(mktemp -d)"
-        youtube-dl -q --write-sub --write-auto-sub --sub-lang en --skip-download -o "$t/tmp" "$1"
+        yt-dlp -q --write-sub --write-auto-sub --sub-lang en --skip-download -o "$t/tmp" "$1"
         ffmpeg -hide_banner -loglevel panic -i "$t/tmp"* -f srt - |\
         perl -p0e 's/\n\n\d+/\n/g' > "$t/$1.srt"
         vim -c ':%s/\r\(\n\)/\1/g' -c ':w' "$t/$1.srt" # https://stackoverflow.com/a/799433 ^M doesn't work
