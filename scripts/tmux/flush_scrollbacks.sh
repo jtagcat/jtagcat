@@ -5,6 +5,8 @@ set -euo pipefail
 baseout="${1}"
 # WARN: overwrites only existing panes, does not delete closed panes. Delete baseout before running for a mirror of current state.
 
+tmux has-session &> /dev/null || exit 2
+
 panes="$(tmux list-panes -a -F '#{session_created}_#{session_id}/#{window_id}/#{pane_id}')"
   # a: all panes of tmux server
 grep -v '^ *#' <<< "$panes" | while IFS= read -r panepath; do
