@@ -145,3 +145,46 @@ jq 'keys'
   "track_metadata"
 ]
 ```
+
+### Filter, select a subset of keys
+#### Input
+```json
+[
+  {
+    "junk": "bar",
+    "endTime": "2021-03-19 00:13",
+    "msPlayed": 91274
+  },
+  {
+    "junk": "dar",
+    "endTime": "2021-03-19 00:14",
+    "msPlayed": 37797
+  },
+  {
+    "garbage": "foo",
+    "endTime": "2021-03-19 00:15",
+    "msPlayed": 0
+  }
+]
+```
+#### Command
+```sh
+jq '[.[] | {endTime, msPlayed}]' ex.json
+```
+#### Output
+```json
+[
+  {
+    "endTime": "2021-03-19 00:13",
+    "msPlayed": 91274
+  },
+  {
+    "endTime": "2021-03-19 00:14",
+    "msPlayed": 37797
+  },
+  {
+    "endTime": "2021-03-19 00:15",
+    "msPlayed": 0
+  }
+]
+```
