@@ -129,7 +129,7 @@ done
 ```
 #### Output
 ```sh
-cat foo bar dar
+$ cat foo bar dar
 foo
 {"endTime":"2021-03-19 00:15","msPlayed":0}
 bar
