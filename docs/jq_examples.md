@@ -206,3 +206,58 @@ jq '[.[] | {endTime, msPlayed}]'
   }
 ]
 ```
+
+### Convert array (slice) to map:
+#### Input
+```json
+[
+    { "id": "bar",
+      "msPlayed": 91274
+    },
+    { "id": "dar",
+      "msPlayed": 37797
+    },
+    { "id": "foo",
+      "msPlayed": 0
+    }
+]
+```
+#### Command
+```sh
+???
+```
+#### Output
+```json
+{
+  "bar": {
+    "msPlayed": 91274
+  },
+  "dar": {
+    "msPlayed": 37797
+  },
+  "foo": {
+    "msPlayed": 0
+  }
+}
+```
+
+### Get value of map parent
+or convert map to slice?
+#### Input
+```json
+{
+    "bar": {
+      "msPlayed": 91274
+    },
+    "dar": {
+      "msPlayed": 37797
+    },
+    "foo": {
+      "msPlayed": 0
+    }
+}
+```
+#### Command
+```sh
+jq '.[] + {"parent": ..}'
+```
