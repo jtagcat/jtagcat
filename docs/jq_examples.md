@@ -99,26 +99,43 @@ jq '{"listen_type": "import", "payload": (.[] |= {"listened_at": (.endTime | spl
 }
 ```
 
-### Split to multiple files with filename from key; move 
-[stg-versioning.sh](../scripts/stg/stg-versioning.sh)
-
-
+### Split to multiple files with filename from key
 #### Input
-
-#TODO:
-
+```json
+[
+  {
+    "id": "bar",
+    "endTime": "2021-03-19 00:13",
+    "msPlayed": 91274
+  },
+  {
+    "id": "dar",
+    "endTime": "2021-03-19 00:14",
+    "msPlayed": 37797
+  },
+  {
+    "id": "foo",
+    "endTime": "2021-03-19 00:15",
+    "msPlayed": 0
+  }
+]
 #### Command
 ```sh
-jq --compact-output --raw-output '(del(.groups)) as $parent|.groups[]|{"filename":"\(.id).json","content":(.}|"\(.filename):\(.content)"' "$INPUTDIR/$backupinput" |\
-grep -v '^ *#' | while IFS=: read -r filename content
-do
-  base64 -d <<< "$content" | jq '{"tabs":(.tabs | sort_by(.id))} + del(.tabs) | del(.tabs[].id)' > "$OUT/$filename" # sort by id, then get rid of the id
+jq -r '.[] | "\(.id)¤\(del(.id)|@base64)"' |\
+while IFS=¤ read -r filename content; do
+  base64 -d <<< "$content" | sed '$a\' > "$filename" # sed: end file with \n
 done
 ```
-
 #### Output
-
-#TODO:
+```sh
+cat foo bar dar
+foo
+{"endTime":"2021-03-19 00:15","msPlayed":0}
+bar
+{"endTime":"2021-03-19 00:13","msPlayed":91274}
+dar
+{"endTime":"2021-03-19 00:14","msPlayed":37797}
+```
 
 ### Get top-level keys of an object
 #### Input
@@ -169,7 +186,7 @@ jq 'keys'
 ```
 #### Command
 ```sh
-jq '[.[] | {endTime, msPlayed}]' ex.json
+jq '[.[] | {endTime, msPlayed}]'
 ```
 #### Output
 ```json
