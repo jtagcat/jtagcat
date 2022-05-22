@@ -119,6 +119,7 @@ jq '{"listen_type": "import", "payload": (.[] |= {"listened_at": (.endTime | spl
     "msPlayed": 0
   }
 ]
+```
 #### Command
 ```sh
 jq -r '.[] | "\(.id)¤\(del(.id)|@base64)"' |\
