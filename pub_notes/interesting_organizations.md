@@ -36,6 +36,7 @@ This is somewhat a list of _'cool'_ companies, and/or companies doing cool thing
  - https://linusmediagroup.com [^way], [^etc]
  - https://stripe.com [^etc]
  - https://discord.com [^prod]
+ - https://www.skeletontech.com [^prod], [^etc]
 
 ### Starting to fall off the list
 Something I dislike has demoted it here.
