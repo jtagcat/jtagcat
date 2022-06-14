@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -ou pipefail
+
+echo https://golangci-lint.run/usage/linters
+golangci-lint --color always run --enable-all 2>&1 | less -R

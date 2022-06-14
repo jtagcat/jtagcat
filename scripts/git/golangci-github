@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+set -eou pipefail
+
+if [ ! -f go.mod ]; then
+    echo "go.mod not found, must be at project root!"
+    exit 1
+fi
+if [ -f .github/workflows/golangci-lint.yml ]; then
+    echo "golangci-lint.yml already exists!"
+    exit 1
+fi
+if ! git diff --exit-code; then
+    echo "git has staged files"
+    exit 1
+fi
+mkdir -p .github/workflows
+cat > .github/workflows/golangci-lint.yml << EOF
+name: golangci-lint
+on:
+  push:
+  pull_request:
+
+jobs:
+  golangci:
+    name: "Run linter (golangci-lint)"
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: "actions/checkout@v2"
+
+      - name: "Run golangci-lint"
+        id: "run-linter"
+        uses: "golangci/golangci-lint-action@v2"
+EOF
+git add .github/workflows/golangci-lint.yml
+git commit -m'ci: add gh actions golangci-lint'
