@@ -9,8 +9,9 @@ backloc="$1"
 #hidelist="$2" # how to implement?
 
 file="$backloc"/"$(exa --sort=new "$backloc" | tail -n 1)"
-datebase="$(rev <<< "$file" | cut -d@ -f 2 | cut -d- -f 1-4 | rev)" # rev implementation not needed anymore, retains compatability with different backup nameschemes.
-stgepoch="$(date -d "$(echo "$(cut -d~ -f 1 <<< "$datebase")"T"$(cut -d~ -f 2 <<< "$datebase" | sed "s/-/:/")+00:00")" "+%s")"
+#datebase="$(rev <<< "$file" | cut -d@ -f 2 | cut -d- -f 1-4 | rev)" # rev implementation not needed anymore, retains compatability with different backup nameschemes.
+#stgepoch="$(date -ud "$(cut -d- -f 4-6 <<< "$file" | cut -d@ -f1)"T"$(cut -d~ -f 2 <<< "$datebase" | sed "s/-/:/")+00:00")" "+%s")"
+stgepoch="$(date -ud "$(cut -d- -f 5-7 <<< "$file" | cut -d@ -f1)" "+%s")"
 epochdiff="$(echo "$(date "+%s")"-"$stgepoch" | bc)"
 
 # header, nonarchived/total tabs, last backup relative time
