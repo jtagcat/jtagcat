@@ -1,4 +1,4 @@
-Looking for freelance for 2022-08 (August 2022).
+Looking for (freelance) work during 2022-08 (August 2022).
 
 ***
 
