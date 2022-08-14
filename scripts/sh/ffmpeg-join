@@ -7,15 +7,13 @@ if [[ "$#" -lt 3 ]]; then
 	exit 1
 fi
 
+temp="$(mktemp)"
+
 for arg in "$@"; do
-    args+=($arg)
+    echo "file $(realpath "$arg")" >> "$temp"
 done
 
-lastarg="${args[-1]}"
-unset 'args[-1]'
+lastarg="$(tail -n1 "$temp" | cut -d' ' -f2)" # file <arg> to <arg>
+sed -i '$d' "$temp"
 
-# to: a|b
-printf -v inputs '%s|' "${args[@]}"
-inputs="${inputs%|}"
-
-ffmpeg -hide_banner -loglevel warning -i "concat:$inputs" -c copy "$lastarg"
+ffmpeg -hide_banner -loglevel warning -f concat -safe 0 -i "$temp" -c copy "$lastarg"
