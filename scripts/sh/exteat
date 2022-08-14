@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+infinite=0
+count=1
+if [[ -n "$1" ]]; then # not empty
+	count="$1"
+
+	if [[ "$count" -lt 1 ]]; then
+		infinite=1
+	fi
+fi
+# offset for cut
+let "count++" || true # if 0, let exits 1
+
+while IFS= read -r line; do
+	out=""
+	if [[ "$infinite" == 0 ]]; then # infinite: jump to extless base
+		out="$(rev <<< "$line" | cut -d. -f "$count"- | rev)"
+	fi
+
+	if [[ "$out" == "" ]]; then # ate all exts, nothing left
+		out="$(cut -d. -f -1 <<< "$line")" # extless base
+	fi
+
+	echo "$out"
+done < /dev/stdin

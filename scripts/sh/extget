@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+count=1
+infinite=0
+if [[ -n "$1" ]]; then # not empty
+	count="$1"
+
+	if [[ "$1" -lt 1 ]]; then
+		infinite=1
+	fi
+fi
+
+# if line == 
+
+while IFS= read -r line; do
+	out="$line"
+	if [[ "$infinite" == 0 ]]; then # infinite: jump to all exts
+		out="$(rev <<< "$line" | cut -d. -f -"$count" | rev)"
+	fi
+
+	if [[ "$out" == "$line" ]]; then # ran out of exts, used base as ext
+		out="$(cut -d. -f 2- <<< "$line")" # all exts
+		if [[ "$out" == "$line" ]]; then # there are 0 exts
+			out=""
+		fi
+	fi
+
+	echo "$out"
+done < /dev/stdin
