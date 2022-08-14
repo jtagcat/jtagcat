@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+if [[ "$#" -lt 3 ]]; then
+	echo "error: expected at least 3 args"
+	echo "USAGE: ffmpeg-join <input...> <output>"
+	exit 1
+fi
+
+for arg in "$@"; do
+    args+=($arg)
+done
+
+lastarg="${args[-1]}"
+unset 'args[-1]'
+
+# to: a|b
+printf -v inputs '%s|' "${args[@]}"
+inputs="${inputs%|}"
+
+ffmpeg -hide_banner -loglevel warning -i "concat:$inputs" -c copy "$lastarg"
