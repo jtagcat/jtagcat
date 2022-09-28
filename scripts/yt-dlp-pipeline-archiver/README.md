@@ -4,7 +4,6 @@ based off of https://github.com/rebane2001/sensible-yt-dlp-archive-scripts/
 
 Make a file named env in the root, with the following:
 ```env
-YTDLPFFMPEG=/path/where/yt-dlp/specific/ffmpeg/binaries/will/be/downloaded/to
 DLBASE=/path/to/output/dir
 INPUTS=/path/to/inputs/dir
 ```

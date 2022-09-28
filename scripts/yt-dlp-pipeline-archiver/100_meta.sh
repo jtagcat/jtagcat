@@ -2,6 +2,7 @@
 set -euo pipefail
 shopt -s nullglob
 
+YTDLPFFMPEG="$(dirname "$0")/ffmpeg"
 mkdir -p "$YTDLPFFMPEG"
 if [ ! -f "$YTDLPFFMPEG/version)" ] || [[ "$(cat "$YTDLPFFMPEG/version)")" != "$(date -uI)" ]]; then
 	tdir="$(mktemp -d)"
