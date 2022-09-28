@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 shopt -s nullglob
 
 YTDLPFFMPEG="$(dirname "$0")/ffmpeg"
@@ -16,6 +16,7 @@ fi
 source "$(dirname "$0")/env"
 
 for file in "$INPUTS/"*; do if [ -s "$file" ]; then # has something in it
+	echo starting $file
 	category="$(basename "$file" | sed 's/.txt$//' | cut -d+ -f1)"
 	mkdir -p "$DLBASE/$category/_indexes"
 
@@ -28,8 +29,8 @@ for file in "$INPUTS/"*; do if [ -s "$file" ]; then # has something in it
 		--paths home:"$DLBASE/$category" --paths temp:"$DLBASE/$category/_temp"
 	
 	cat "$tfile" >> "$DLBASE/$category/_indexes/known_urls.txt"
-        if echo "$file" |grep -q "+comments"; then
-		cat "$file" >> "$DLBASE/$category/_indexes/comments_urls.txt"
+        if echo "$tfile" |grep -q "+comments"; then
+		cat "$tfile" >> "$DLBASE/$category/_indexes/comments_urls.txt"
         fi
 
 	rm "$tfile"

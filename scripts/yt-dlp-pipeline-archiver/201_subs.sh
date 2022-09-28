@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 shopt -s nullglob
 
 source "$(dirname "$0")/env"
 
-for category in "$DLBASE/"*"/_indexes/known_urls.txt"; do
-        indexloc="$(basename "$category")"
+for categorypath in "$DLBASE/"*; do if [ -s "$categorypath/_indexes/known_urls.txt" ]; then
+        category="$(basename "$categorypath")"
+        echo "starting $category"
 
         yt-dlp --config-locations "$(dirname "$0")/common.conf" \
-		--batch-file="$indexloc/known_urls.txt" --skip-download \
+		--batch-file="$categorypath/_indexes/known_urls.txt" --skip-download \
 		--write-subs --sub-langs all --write-auto-subs --extractor-args youtube:skip=translated_subs `# for no live chats (if currnetly live is filtered seperately): --sub-langs all,-live_chat` \
-		--force-write-archive --download-archive="$indexloc/subs.txt" \
+		--force-write-archive --download-archive="$categorypath/_indexes/subs.txt" \
                 --paths home:"$DLBASE/$category" --paths temp:"$DLBASE/$category/_temp"
-done
+fi;done
