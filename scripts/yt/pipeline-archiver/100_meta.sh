@@ -20,18 +20,18 @@ for file in "$INPUTS/"*; do if [ -s "$file" ]; then # has something in it
 	category="$(basename "$file" | sed 's/.txt$//' | cut -d+ -f1)"
 	mkdir -p "$DLBASE/$category/_indexes"
 
-	tfile="$(mktemp)"
+	tempf="$(mktemp)"
 	yt-dlp --config-locations "$(dirname "$0")/common.conf" \
 		--batch-file="$INPUTS/$(basename "$file")" --skip-download \
 		--write-info-json --write-description --write-thumbnail \
 		--force-write-archive --download-archive="$DLBASE/$category/_indexes/meta.txt" \
-		--print-to-file after_video:"%(webpage_url)s" "$tfile" \
+		--print-to-file after_video:"%(webpage_url)s" "$tempf" \
 		--paths home:"$DLBASE/$category" --paths temp:"$DLBASE/$category/_temp"
 	
-	cat "$tfile" >> "$DLBASE/$category/_indexes/known_urls.txt"
-        if echo "$tfile" |grep -q "+comments"; then
-		cat "$tfile" >> "$DLBASE/$category/_indexes/comments_urls.txt"
+	cat "$tempf" >> "$DLBASE/$category/_indexes/known_urls.txt"
+        if echo "$file" |grep -q "+comments"; then
+		cat "$tempf" >> "$DLBASE/$category/_indexes/comments_urls.txt"
         fi
 
-	rm "$tfile"
+	rm "$tempf"
 fi; done
