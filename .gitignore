@@ -1,4 +1,5 @@
 .envrc
+.vscode
 # reminders
 NOTICE_*
 # contains repo names in per-repo variables in the case variables
