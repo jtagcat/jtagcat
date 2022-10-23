@@ -20,7 +20,7 @@ for file in "$INPUTS/"*; do if [ -s "$file" ]; then # has something in it
 	category="$(basename "$file" | sed 's/.txt$//' | cut -d+ -f1)"
 	mkdir -p "$DLBASE/$category/_indexes"
 
-	tempf="$(mktemp)"
+	tempf="$(mktemp -p "$INPUTS"/../tmp)"
 	yt-dlp --config-locations "$(dirname "$0")/common.conf" \
 		--batch-file="$INPUTS/$(basename "$file")" --skip-download \
 		--write-info-json --write-description --write-thumbnail \
