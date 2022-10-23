@@ -106,11 +106,13 @@ func mainLoop() {
 			continue
 		}
 		category = strings.TrimPrefix(category, "yt/")
+		category += "-auto"
 
 		appendable, archiveIt := useTags(fp.tags)
 		if !archiveIt {
 			continue
 		}
+
 		// divide to maximum MAX_PER_FILE per (category) file
 		catC, _ := catCount[category]
 		catCount[category] = catC + 1
@@ -145,7 +147,7 @@ func mainLoop() {
 		}
 	}
 
-	// delete files with +auto, that aren't referenced this time around
+	// delete files with -auto, that aren't referenced this time around
 
 	ls, err := os.ReadDir(outdir)
 	if err != nil {
@@ -157,25 +159,19 @@ func mainLoop() {
 			continue
 		}
 
-		parts := strings.Split(file.Name(), "+")
+		part, _, _ := strings.Cut(file.Name(), "+")
 
-		for _, t := range parts[1:] { // ignore category name to get tags, might be nil
-			if strings.EqualFold(t, "auto") { // ignore non-auto
-
-				_, ok := catMap[strings.ToLower(file.Name())]
-				if !ok {
-					os.Remove(path.Join(outdir, file.Name()))
-				}
-				continue
+		if strings.HasSuffix(part, "-auto") { // ignore non-auto
+			_, ok := catMap[strings.ToLower(file.Name())]
+			if !ok {
+				os.Remove(path.Join(outdir, file.Name()))
 			}
+			continue
 		}
-
 	}
 }
 
 func useTags(tags tagMap) (appendable string, archiveIt bool) {
-	appendable += "+auto"
-
 	if _, ok := tags["a"]; ok {
 		archiveIt = true
 	}
