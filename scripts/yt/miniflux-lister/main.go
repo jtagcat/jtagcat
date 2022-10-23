@@ -14,7 +14,10 @@ import (
 	miniflux "miniflux.app/client"
 )
 
-const ENVPREFIX = "YTLISTER_"
+const (
+	ENVPREFIX    = "YTLISTER_"
+	MAX_PER_FILE = 6
+)
 
 func main() {
 	// os.Exit with 2 on hard kill
@@ -95,7 +98,8 @@ func mainLoop() {
 
 	ytFeeds := processFeeds(c, feeds)
 
-	catMap := make(map[string]*renameio.PendingFile)
+	catMap, catCount := make(map[string]*renameio.PendingFile), make(map[string]int)
+
 	for _, fp := range ytFeeds {
 		category := strings.ToLower(fp.feed.Category.Title)
 		if !strings.HasPrefix(category, "yt/") {
@@ -107,6 +111,15 @@ func mainLoop() {
 		if !archiveIt {
 			continue
 		}
+		// divide to maximum MAX_PER_FILE per (category) file
+		catC, _ := catCount[category]
+		catCount[category] = catC + 1
+
+		catN := (catC / MAX_PER_FILE) + 1
+		if catN > 1 {
+			category += fmt.Sprintf("-%d", catN)
+		}
+
 		category += appendable
 
 		if _, ok := catMap[category]; !ok {
