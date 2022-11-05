@@ -241,8 +241,8 @@ jq '[.[] | {endTime, msPlayed}]'
 }
 ```
 
-### Get value of map parent
-or convert map to slice?
+### Convert map to array
+(Get value of map parent; Getting value of map parent; Get key; Getting key)
 #### Input
 ```json
 {
