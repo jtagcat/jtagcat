@@ -224,7 +224,7 @@ jq '[.[] | {endTime, msPlayed}]'
 ```
 #### Command
 ```sh
-???
+jq '[.[] | {key:.id, value:del(.id)}] | from_entries'
 ```
 #### Output
 ```json
