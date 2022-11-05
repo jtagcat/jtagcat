@@ -259,5 +259,22 @@ or convert map to slice?
 ```
 #### Command
 ```sh
-jq '.[] + {"parent": ..}'
+jq '[to_entries[] | {parent: .key} + .value]'
+```
+#### Output
+```json
+[
+  {
+    "parent": "bar",
+    "msPlayed": 91274
+  },
+  {
+    "parent": "dar",
+    "msPlayed": 37797
+  },
+  {
+    "parent": "foo",
+    "msPlayed": 0
+  }
+]
 ```
