@@ -278,3 +278,38 @@ jq '[to_entries[] | {parent: .key} + .value]'
   }
 ]
 ```
+
+### Set a field to map with key
+#### Input
+```json
+{
+    "bar": {
+      "msPlayed": 91274
+    },
+    "dar": {
+      "msPlayed": 37797
+    },
+    "foo": {
+      "msPlayed": 0
+    }
+}
+```
+#### Command
+```sh
+jq --arg key "bar" --arg val "hello"  '. * {($key): {"myValue": $val, "msPlayed": 5} }'
+```
+#### Output
+```json
+{
+  "bar": {
+    "msPlayed": 5,
+    "myValue": "hello"
+  },
+  "dar": {
+    "msPlayed": 37797
+  },
+  "foo": {
+    "msPlayed": 0
+  }
+}
+```
