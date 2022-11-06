@@ -1,8 +1,8 @@
 # https://github.com/jtagcat/dotfiles/blob/main/scripts/template/gobuild.Dockerfile
 # non-working workarounds: https://gist.github.com/jtagcat/189b2fd239687ab700f54faa46907df4
 
-# TODO: set go version (1.18)
-FROM golang:1.18 AS builder
+# TODO: set go version (1.19)
+FROM golang:1.19 AS builder
 WORKDIR /wd
 
 COPY go.mod go.sum ./
