@@ -3,3 +3,7 @@ set -ou pipefail
 
 go work sync 2> /dev/null || true # kinda shitty workaround to actually detecting whether go.work exists
 go mod tidy
+if [ -d "vendor" ]; then
+	go mod vendor
+fi
+
