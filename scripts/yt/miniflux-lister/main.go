@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/google/renameio/v2"
+	"github.com/jtagcat/util/std"
 	miniflux "miniflux.app/client"
 )
 
@@ -217,7 +218,7 @@ func processFeeds(c *miniflux.Client, feeds miniflux.Feeds) (ytFeeds []feedPlus)
 			}
 
 			f.Title = f.Title[:len(f.Title)-1] // rm "]"
-			cleanTitle, tagStr, _ := revCut(f.Title, " [")
+			cleanTitle, tagStr, _ := std.RevCut(f.Title, " [")
 			f.Title = cleanTitle
 
 			tags := make(map[string]bool)
