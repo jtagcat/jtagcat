@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -ou pipefail
+
+go get -u ./...
+if [ -d "vendor" ]; then
+	go mod vendor
+fi
+
