@@ -213,9 +213,18 @@ func processFeeds(c *miniflux.Client, feeds miniflux.Feeds) (ytFeeds []feedPlus)
 				continue
 			}
 
-			// somethingTitle [tag,tag2]
+			// add empty tag
 			if !strings.HasSuffix(f.Title, "]") {
-				log.Printf("Feed %d (%s) has no tag!", f.ID, f.Title)
+				newTitle := f.Title + " []"
+				if _, err := c.UpdateFeed(f.ID, &miniflux.FeedModificationRequest{Title: &newTitle}); err != nil {
+					log.Printf("error adding empty tag to feed %d: %e", f.ID, err)
+				}
+
+				continue
+			}
+
+			if strings.HasSuffix(f.Title, "[]") {
+				log.Printf("feed %d (%s) tag is empty", f.ID, f.Title)
 				continue
 			}
 
