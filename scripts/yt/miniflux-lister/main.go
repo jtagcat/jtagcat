@@ -209,11 +209,13 @@ func processFeeds(c *miniflux.Client, feeds miniflux.Feeds) (ytFeeds []feedPlus)
 				}
 			}
 
+			if f.Disabled {
+				continue
+			}
+
 			// somethingTitle [tag,tag2]
 			if !strings.HasSuffix(f.Title, "]") {
-				if !f.Disabled {
-					log.Printf("Feed %d (%s) has no tag!", f.ID, f.Title)
-				}
+				log.Printf("Feed %d (%s) has no tag!", f.ID, f.Title)
 				continue
 			}
 
