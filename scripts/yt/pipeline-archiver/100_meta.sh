@@ -16,7 +16,9 @@ fi
 source "$(dirname "$0")/env"
 
 for file in "$INPUTS/"*; do if [ -s "$file" ]; then # has something in it
-	echo starting $file
+	echo "starting $file"
+	>&2 echo "starting $file"
+
 	category="$(basename "$file" | sed 's/.txt$//' | cut -d+ -f1)"
 	mkdir -p "$DLBASE/$category/_indexes"
 
