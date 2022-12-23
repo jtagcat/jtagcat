@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 shopt -s nullglob
 
 YTDLPFFMPEG="$(dirname "$0")/ffmpeg"
