@@ -1,4 +1,6 @@
- # Interesting organizations
+[[Private additions](joplin://x-callback-url/openNote?id=3de6acd183c443cdb811941ea2188e22)]
+
+# Interesting organizations
 Companies, that have my interest on their business[^biz], their way of business[^way], their product[^prod], or something else[^etc].  
 This is somewhat a list of _'cool'_ companies, and/or companies doing cool things.
  
