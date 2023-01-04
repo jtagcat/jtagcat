@@ -4,6 +4,5 @@
 
 The bio doesn't have git history, so let's plop it here as well:
 ```
-A datahoarder, a tabhoarder, packaged in one.
-Researching (any), critiquing (UX, design, psy), tinkering around (labbing). Married to data, sound and language.
+Data and tab hoarder researching, tinkering, designing (developing k8s?) Married to data, sound and language. I would never do cybercrime or forget to eat daily.
 ```
