@@ -22,4 +22,5 @@ WORKDIR /wd
 #RUN apk --no-cache add ca-certificates
 
 COPY --from=builder /wd/app ./
+USER notroot:notroot
 CMD ["./app"]
