@@ -1,0 +1,15 @@
+#!/bin/bash
+set -eo pipefail
+
+if [[ "$#" != 1 ]]; then
+	exit 1
+fi
+
+status="$(wpctl get-volume "$1")"
+
+if [[ "$(cut -d' ' -f3 <<< "$status")" == "[MUTED]" ]]; then
+	echo 0
+	exit
+fi
+
+cut -d' ' -f2 <<< "$status" | sed 's/\.//' | sed 's/^0//'

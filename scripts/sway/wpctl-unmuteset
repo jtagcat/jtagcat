@@ -1,0 +1,14 @@
+#!/bin/bash
+set -eo pipefail
+
+if [[ "$#" != 2 ]]; then
+	exit 1
+fi
+
+if [[ "$(wpctl get-volume "$1" | cut -d' ' -f3)" == "[MUTED]" ]]; then
+	wpctl set-volume "$1" 0
+	wpctl set-mute "$1" 0
+fi
+
+wpctl set-volume "$1" "$2"
+wpctl get-volume "$1" | cut -d' ' -f2 | sed 's/\.//' | sed 's/^0//'
