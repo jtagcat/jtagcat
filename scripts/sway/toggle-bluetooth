@@ -1,0 +1,23 @@
+#!/bin/bash
+set -euo pipefail
+
+status="$(bluetoothctl show | grep Powered | sed 's/[[:space:]]*Powered: //g')"
+
+if [[ "$status" == "yes" ]]; then
+	bluetoothctl disconnect "$1" || true
+	bluetoothctl power off
+	notify-send -t 1500 "Bluetooth off"
+else
+	bluetoothctl power on
+	notify-send -t 500 "Bluetooth on"
+
+	name="$(bluetoothctl info "$1" | grep Name | cut -d: -f 2 | cut -c2-)"
+
+	bluetoothctl disconnect "$1" || true
+	if bluetoothctl connect "$1"; then
+		notify-send -t 1500 "Connected to $name"
+	else
+		bluetoothctl power off
+		notify-send -t 3000 "Connection to $name failed; Bluetooth off"
+	fi
+fi
