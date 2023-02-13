@@ -1,0 +1,32 @@
+#!/bin/bash
+set -euo pipefail
+
+#1 id
+#2 default bg
+#3 default fg
+#4 warn capacity
+#5 warn bg
+#6 warn fg
+#7 critical capacity
+#8 critical bg
+#9 critical fg
+
+while true; do
+
+if [[ "$(cat /sys/class/power_supply/BAT0/capacity)" -le "$4" ]]; then
+	while [[ "$(cat /sys/class/power_supply/AC/online)" == 0 ]]; do
+			warn_bg="$5" warn_fg="$6" delay=2
+			if [[ "$(cat /sys/class/power_supply/BAT0/capacity)" -le "$7" ]]; then
+				warn_bg="$8" warn_fg="$9" delay=0.5
+			fi
+			swaymsg bar "$1" colors background "$warn_bg"
+			swaymsg bar "$1" colors statusline "$warn_fg"
+			sleep "$delay"
+			swaymsg bar "$1" colors background "$2"
+			swaymsg bar "$1" colors statusline "$3"
+			sleep "$delay"
+	done
+fi
+
+sleep 10
+done
