@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -ou pipefail
 
-go get -u github.com/jtagcat/util
+GOPROXY=direct go get -u github.com/jtagcat/util
 if [ -d "vendor" ]; then
 	go mod vendor
 fi
