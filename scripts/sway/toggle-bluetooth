@@ -8,6 +8,7 @@ if [[ "$status" == "yes" ]]; then
 	bluetoothctl power off
 	notify-send -t 1500 "Bluetooth off"
 else
+	wpctl set-mute @DEFAULT_AUDIO_SINK@ 1
 	bluetoothctl power on
 	notify-send -t 500 "Bluetooth on"
 
