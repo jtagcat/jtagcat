@@ -39,6 +39,7 @@ This is somewhat a list of _'cool'_ companies, and/or companies doing cool thing
  - https://stripe.com [^etc]
  - https://discord.com [^prod]
  - https://www.skeletontech.com [^prod], [^etc]
+ - https://www.quadratichq.com [^prod], [^biz]
 
 ### Starting to fall off the list
 Something I dislike has demoted it here.
