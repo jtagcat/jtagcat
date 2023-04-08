@@ -35,7 +35,7 @@ func main() {
 		cancel()
 	}()
 
-	go func() {
+ 	go func() {
 		select {
 		case <-signalChan: // first signal, cancel context
 			os.Stderr.WriteString("Signal relayed, press ^C again to kill.")

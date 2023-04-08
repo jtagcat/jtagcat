@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"sort"
 	"strings"
 
 	"github.com/google/renameio/v2"
@@ -12,13 +13,10 @@ import (
 	miniflux "miniflux.app/client"
 )
 
-func mainLoop() {
-	outdir := os.Getenv(ENVPREFIX + "OUTDIR")
-	if outdir == "" {
-		log.Fatal(ENVPREFIX + "OUTDIR env variable is empty")
-	}
+func client() *miniflux.Client {
 	endpoint, token := os.Getenv(ENVPREFIX+"MINIFLUX_ENDPOINT"), os.Getenv(ENVPREFIX+"MINIFLUX_TOKEN")
 	endpoint = strings.TrimSuffix(strings.TrimSuffix(endpoint, "/"), "/v1") // https://github.com/miniflux/v2/pull/1582
+
 	c := miniflux.New(endpoint, token)
 
 	me, err := c.Me()
@@ -27,100 +25,25 @@ func mainLoop() {
 	}
 	log.Printf("Authenticated as %s", me.Username)
 
+	return c
+}
+
+func mainLoop() {
+	basedir := os.Getenv(ENVPREFIX + "OUTDIR")
+	if basedir == "" {
+		log.Fatal(ENVPREFIX + "OUTDIR env variable is empty")
+	}
+
+	c := client()
+
 	feeds, err := c.Feeds()
 	if err != nil {
 		log.Fatal("error getting feeds: %w", err)
 	}
 
-	// programmer hardcoding like hell
-
 	ytFeeds := processFeeds(c, feeds)
 
-	catMap, catCount := make(map[string]*renameio.PendingFile), make(map[string]int)
-
-	for _, fp := range ytFeeds {
-		category := strings.ToLower(fp.feed.Category.Title)
-		if !strings.HasPrefix(category, "yt/") {
-			continue
-		}
-
-		category = strings.TrimPrefix(category, "yt/")
-		category += "-auto"
-
-		appendable, archiveIt := useTags(fp.tags)
-		if !archiveIt {
-			continue
-		}
-
-		// divide to maximum MAX_PER_FILE per (category) file
-		catC, _ := catCount[category]
-		catCount[category] = catC + 1
-
-		catN := (catC / MAX_PER_FILE) + 1
-		if catN > 1 {
-			category += fmt.Sprintf("-%d", catN)
-		}
-
-		category += appendable
-
-		if _, ok := catMap[category]; !ok {
-			catMap[category], err = renameio.NewPendingFile(path.Join(outdir, category))
-			if err != nil {
-				log.Fatalf("error creating temporary file at %s: %e", path.Join(outdir, category), err)
-			}
-		}
-
-		if strings.Contains(fp.feed.SiteURL, "/channel/") {
-			fp.feed.SiteURL = fp.feed.SiteURL + "/videos"
-		}
-
-		_, err := catMap[category].WriteString(fmt.Sprintf("%s # %s\n", fp.feed.SiteURL, fp.feed.Title))
-		if err != nil {
-			log.Fatalf("error writing to temporary file of %s: %e", category, err)
-		}
-	}
-
-	for category, pf := range catMap {
-		if err := pf.CloseAtomicallyReplace(); err != nil {
-			log.Fatalf("error replacing temporary file of %s: %e", category, err)
-		}
-	}
-
-	// delete files with -auto, that aren't referenced this time around
-
-	ls, err := os.ReadDir(outdir)
-	if err != nil {
-		log.Fatalf("listing files in %s: %e", outdir, err)
-	}
-
-	for _, file := range ls {
-		if file.IsDir() {
-			continue
-		}
-
-		part, _, _ := strings.Cut(file.Name(), "+")
-
-		if strings.HasSuffix(part, "-auto") { // ignore non-auto
-			_, ok := catMap[strings.ToLower(file.Name())]
-			if !ok {
-				os.Remove(path.Join(outdir, file.Name()))
-			}
-			continue
-		}
-	}
-}
-
-func useTags(tags tagMap) (appendable string, archiveIt bool) {
-	if _, ok := tags["a"]; ok {
-		archiveIt = true
-	}
-
-	if _, ok := tags["c"]; ok {
-		appendable += "+comments"
-		archiveIt = true
-	}
-
-	return appendable, archiveIt
+	flushToFiles(basedir, ytFeeds)
 }
 
 type (
@@ -129,6 +52,8 @@ type (
 		feed *miniflux.Feed
 	}
 	tagMap map[string]bool // lowercase, bool has no meaning
+
+	categorizedFeeds map[string][]feedPlus
 )
 
 // filters for yt,
@@ -174,7 +99,7 @@ func processFeeds(c *miniflux.Client, feeds miniflux.Feeds) (ytFeeds []feedPlus)
 			for _, t := range strings.Split(
 				strings.ToLower(tagStr), ",") {
 				//
-				tags[t] = false
+				tags[t] = true
 			}
 
 			ytFeeds = append(ytFeeds, feedPlus{
@@ -184,4 +109,135 @@ func processFeeds(c *miniflux.Client, feeds miniflux.Feeds) (ytFeeds []feedPlus)
 		}
 	}
 	return ytFeeds
+}
+
+func filterFeeds(ytFeeds []feedPlus) (feeds, feedsWithComments categorizedFeeds) {
+	feeds, feedsWithComments = make(categorizedFeeds), make(categorizedFeeds)
+
+	for _, feed := range ytFeeds {
+		feed.feed.Category.Title = strings.ToLower(feed.feed.Category.Title)
+		if !strings.HasPrefix(feed.feed.Category.Title, "yt/") {
+			continue
+		}
+
+		if yes, ok := feed.tags["i"]; ok && yes {
+			continue
+		}
+
+		if yes, ok := feed.tags["a"]; ok && yes {
+			feeds[feed.feed.Category.Title] = append(feeds[feed.feed.Category.Title], feed)
+			continue
+		}
+
+		if yes, ok := feed.tags["c"]; ok && yes {
+			feedsWithComments[feed.feed.Category.Title] = append(feedsWithComments[feed.feed.Category.Title], feed)
+			continue
+		}
+	}
+
+	return
+}
+
+func flushToFiles(basedir string, ytFeeds []feedPlus) {
+	feeds, feedsWithComments := filterFeeds(ytFeeds)
+
+	flushWithSuffix(basedir, feeds, "")
+	flushWithSuffix(basedir, feedsWithComments, "comments")
+}
+
+func flushWithSuffix(basedir string, feeds categorizedFeeds, suffix string) {
+	for category, subfeeds := range feeds {
+		sort.SliceStable(subfeeds, func(i, j int) bool {
+			return subfeeds[i].feed.ID > subfeeds[j].feed.ID
+		})
+
+		filename := rotatingFile{
+			basename:     fmt.Sprintf("%s-auto", strings.TrimPrefix(category, "yt/")) + addSuffix("-", suffix),
+			maxPerIndex:  MAX_PER_FILE,
+			currentIndex: 1,
+		}
+
+		files := make(pendingFiles)
+
+		for _, feed := range subfeeds {
+			currentFile := getPending(files, basedir, filename.get()+addSuffix("+", suffix))
+
+			if strings.Contains(feed.feed.SiteURL, "/channel/") {
+				feed.feed.SiteURL = path.Join(feed.feed.SiteURL, "/videos")
+			}
+
+			_, err := currentFile.WriteString(fmt.Sprintf("%s # %s\n", feed.feed.SiteURL, feed.feed.Title))
+			if err != nil {
+				log.Fatalf("error writing to temporary file of %s: %e", category, err)
+			}
+
+		}
+
+		for _, file := range files {
+			file.CloseAtomicallyReplace()
+		}
+
+		// delete unreferenced -auto files
+		ls, err := os.ReadDir(basedir)
+		if err != nil {
+			log.Fatalf("listing files in %s: %e", basedir, err)
+		}
+
+		for _, file := range ls {
+			if file.IsDir() {
+				continue
+			}
+
+			if !strings.HasPrefix(file.Name(), filename.basename) {
+				continue
+			}
+
+			_, ok := files[file.Name()]
+			if !ok {
+				os.Remove(path.Join(basedir, file.Name()))
+			}
+		}
+	}
+}
+
+type rotatingFile struct {
+	basename    string
+	maxPerIndex int
+
+	inCurrent    int
+	currentIndex int
+}
+
+func (c *rotatingFile) get() string {
+	c.inCurrent++
+
+	if c.inCurrent > c.maxPerIndex {
+		c.currentIndex++
+		c.inCurrent = 1
+	}
+
+	return fmt.Sprintf("%s-%d", c.basename, c.currentIndex)
+}
+
+type pendingFiles map[string]*renameio.PendingFile
+
+func getPending(files pendingFiles, basedir, name string) *renameio.PendingFile {
+	if _, ok := files[name]; !ok {
+		var err error
+
+		files[name], err = renameio.NewPendingFile(path.Join(basedir, name))
+		if err != nil {
+			log.Fatalf("error creating temporary file %q: %e", name, err)
+		}
+	}
+
+	return files[name]
+}
+
+func addSuffix(separator, suffix string) string {
+	if suffix == "" {
+		return ""
+	}
+
+	return separator + suffix
 }
