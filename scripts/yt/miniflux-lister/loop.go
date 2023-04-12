@@ -163,7 +163,7 @@ func flushWithSuffix(basedir string, feeds categorizedFeeds, suffix string) {
 			currentFile := getPending(files, basedir, filename.get()+addSuffix("+", suffix))
 
 			if strings.Contains(feed.feed.SiteURL, "/channel/") {
-				feed.feed.SiteURL = path.Join(feed.feed.SiteURL, "/videos")
+				feed.feed.SiteURL = strings.TrimSuffix(feed.feed.SiteURL, "/") + "/videos"
 			}
 
 			_, err := currentFile.WriteString(fmt.Sprintf("%s # %s\n", feed.feed.SiteURL, feed.feed.Title))
