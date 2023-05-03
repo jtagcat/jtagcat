@@ -40,6 +40,7 @@ This is somewhat a list of _'cool'_ companies, and/or companies doing cool thing
  - https://discord.com [^prod]
  - https://www.skeletontech.com [^prod], [^etc]
  - https://www.quadratichq.com [^prod], [^biz]
+ - https://www.solidigm.com/ [^prod], [^etc]
 
 ### Starting to fall off the list
 Something I dislike has demoted it here.
