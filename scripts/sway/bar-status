@@ -1,28 +1,58 @@
 #!/bin/bash
-set -euo pipefail
+set -uo pipefail
 
 # expected to be executed every $1 seconds
 while true; do
 out=""
+	source="$(wpctl inspect @DEFAULT_AUDIO_SOURCE@ | grep ' node.description =' | cut -d\" -f2)"
+	case "$source" in
+		"Built-in Audio Analog Stereo")
+			;;
+		"Webcam C310 Mono")
+			out+="🎤C310 "
+			;;
+		"ThinkPad Dock USB Audio Analog Stereo")
+			out+="🎤Dock "
+			;;
+		*)
+			out+="🎤$source "
+			;;
+	esac
+
+	sink="$(wpctl inspect @DEFAULT_AUDIO_SINK@ | grep ' node.description =' | cut -d\" -f2)"
+	case "$sink" in
+		"Built-in Audio Analog Stereo")
+			;;
+		"ThinkPad Dock USB Audio Analog Stereo")
+			out+="🔈Dock "
+			;;
+		*)
+			out+="🔈$sink "
+			;;
+	esac
+
+
 	case "$(swaymsg -t get_inputs | jq -r 'map(select(has("xkb_active_layout_name")))[0].xkb_active_layout_name')" in
 		"Estonian (no dead keys)")
 			;;
 		"Russian (Sweden, phonetic)")
-			out+="[ru] "
+			out+="[ru]	"
 			;;
 		"English (US)")
-			out+="[en] "
+			out+="[en]	"
 			;;
 		*)
-			out+="[?kbd?] "
+			out+="[?kbd?]	"
 			;;
 	esac
 	
+
 	if [[ "$(cat /sys/class/power_supply/AC/online)" == 1 ]]; then
 		out+='🔌'
 	fi
 	out+="$(cat /sys/class/power_supply/BAT0/capacity)%"
 	
+
 	out+=" $(date +'%Y-%m-%d %H:%M:%S')"
 
 echo "$out"
