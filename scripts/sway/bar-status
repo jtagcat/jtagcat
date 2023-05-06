@@ -1,0 +1,30 @@
+#!/bin/bash
+set -euo pipefail
+
+# expected to be executed every $1 seconds
+while true; do
+out=""
+	case "$(swaymsg -t get_inputs | jq -r 'map(select(has("xkb_active_layout_name")))[0].xkb_active_layout_name')" in
+		"Estonian (no dead keys)")
+			;;
+		"Russian (Sweden, phonetic)")
+			out+="[ru] "
+			;;
+		"English (US)")
+			out+="[en] "
+			;;
+		*)
+			out+="[?kbd?] "
+			;;
+	esac
+	
+	if [[ "$(cat /sys/class/power_supply/AC/online)" == 1 ]]; then
+		out+='🔌'
+	fi
+	out+="$(cat /sys/class/power_supply/BAT0/capacity)%"
+	
+	out+=" $(date +'%Y-%m-%d %H:%M:%S')"
+
+echo "$out"
+sleep "$1"
+done

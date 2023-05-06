@@ -1,0 +1,8 @@
+#!/bin/bash
+set -euo pipefail
+
+IFS=',' read -r -a allowed <<< "$1"
+
+if [[ " ${allowed[*]} " =~ " ${HOSTNAME} " ]]; then
+	${@:2}
+fi
