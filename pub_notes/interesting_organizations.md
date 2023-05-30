@@ -41,6 +41,7 @@ This is somewhat a list of _'cool'_ companies, and/or companies doing cool thing
  - https://www.skeletontech.com [^prod], [^etc]
  - https://www.quadratichq.com [^prod], [^biz]
  - https://www.solidigm.com/ [^prod], [^etc]
+ - https://www.recordedfuture.com/ [^etc]
 
 ### Starting to fall off the list
 Something I dislike has demoted it here.
