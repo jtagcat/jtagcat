@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -eo pipefail
 
 #1 id
 #2 default bg
@@ -11,6 +11,17 @@ set -euo pipefail
 #8 critical bg
 #9 critical fg
 
+#TODO: should be rewritten with clear states and priorities
+
+barId="$1"
+defaultBg="$2"
+defaultFg="$3"
+function default {
+	swaymsg bar "$barId" colors background "$defaultBg"
+	swaymsg bar "$barId" colors statusline "$defaultFg"
+}
+
+pendingclear=0
 while true; do
 	while [[ "$(cat /sys/class/power_supply/AC/online)" == 0 && "$(cat /sys/class/power_supply/BAT0/capacity)" -le "$4" ]]; do
 		warn_bg="$5" warn_fg="$6" delay=2
@@ -20,9 +31,19 @@ while true; do
 		swaymsg bar "$1" colors background "$warn_bg"
 		swaymsg bar "$1" colors statusline "$warn_fg"
 		sleep "$delay"
-		swaymsg bar "$1" colors background "$2"
-		swaymsg bar "$1" colors statusline "$3"
+		default	
 		sleep "$delay"
 	done
+
+	if [[ "$(cat "$HOME/.cache/poll-timetagger")" == "" ]]; then
+		swaymsg bar "$1" colors background 0f3d57
+		swaymsg bar "$1" colors statusline ffffff
+		pendingclear=1
+	else
+		if [[ "$pendingclear" == 1 ]]; then
+			default
+			pendingclear=0
+		fi
+	fi
 sleep 10
 done
