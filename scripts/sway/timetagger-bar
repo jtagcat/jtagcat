@@ -1,0 +1,37 @@
+#!/bin/bash
+set -uo pipefail
+
+infocache=""
+
+function run {
+	status="$(timetagger status | awk 'FNR == 4 {print}' | cut -d' ' -f 2-)"
+	
+	if [[ "$status" == "N/A" ]]; then
+		return
+	fi
+	
+	# round down to nearest 5, 24 -> 20, 25 -> 25
+	hours="$(cut -d: -f1 <<< "$status")"
+	minutes="$(cut -d' ' -f1 <<< "$status" | cut -d: -f2 | awk '{$i = int($i / 5) * 5} 1')"
+	info="$(cut -d' ' -f3- <<< "$status")"
+	
+	if [[ "$hours" == "0" ]]; then
+		hours=""
+	else
+		hours+="h"
+	fi
+	
+	infocache="$info"
+	echo "${hours}${minutes}m ${info}"
+}
+
+while true; do
+        if ping jtag.cat -c1 -q 2>&1 > /dev/null; then
+                run > "$2.tmp"
+        else
+                echo " ($infocache)" > "$2.tmp"
+        fi
+        
+	mv "$2.tmp" "$2"
+        sleep "$1"
+done

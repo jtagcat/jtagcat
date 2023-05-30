@@ -1,0 +1,18 @@
+#!/bin/bash
+set -euo pipefail
+
+if [[ "$#" != 1 ]]; then
+	echo expected exaxtly 1 argument: output directory
+fi
+
+ext=""
+case "$(wl-paste | file - --mime-type -b)" in
+	"text/plain")
+		ext=".txt"
+		;;
+	"image/png")
+		ext=".png"
+		;;
+esac
+
+wl-paste > "$1"/paste-"$(date --iso-8601=seconds | cut -d+ -f1)""$ext"
