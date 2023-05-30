@@ -4,33 +4,63 @@ set -uo pipefail
 # expected to be executed every $1 seconds
 while true; do
 out=""
-	source="$(wpctl inspect @DEFAULT_AUDIO_SOURCE@ | grep ' node.description =' | cut -d\" -f2)"
-	case "$source" in
-		"Built-in Audio Analog Stereo")
+	out+="⏲️$(cat "$HOME/.cache/poll-timetagger")	"
+
+	outcache=""
+	dev="$(wpctl inspect @DEFAULT_AUDIO_SOURCE@ | grep ' node.description =' | cut -d\" -f2)"
+	case "$dev" in
+		"Built-in Audio Analog Stereo"|"Family 17h/19h HD Audio Controller Digital Microphone")
 			;;
 		"Webcam C310 Mono")
-			out+="🎤C310 "
+			outcache="C310"
 			;;
-		"ThinkPad Dock USB Audio Analog Stereo")
-			out+="🎤Dock "
+		"ThinkPad Dock USB Audio Analog Stereo"|"ThinkPad USB-C Dock Gen2 USB Audio Mono")
+			outcache="Dock"
 			;;
-		*)
-			out+="🎤$source "
-			;;
-	esac
-
-	sink="$(wpctl inspect @DEFAULT_AUDIO_SINK@ | grep ' node.description =' | cut -d\" -f2)"
-	case "$sink" in
-		"Built-in Audio Analog Stereo")
-			;;
-		"ThinkPad Dock USB Audio Analog Stereo")
-			out+="🔈Dock "
+		"Jabra SPEAK 410 Mono")
+			outcache="Jabra"
 			;;
 		*)
-			out+="🔈$sink "
+			outcache="$dev"
 			;;
 	esac
+	if [[ "$("$(dirname "$0")/wpctl-status" @DEFAULT_AUDIO_SOURCE@)" == 0 ]]; then
+		if [[ "$outcache" = "" ]]; then
+			out+="🎤❌ "
+		else
+			out+="🎤❌$outcache "
+		fi
+	else
+		if [[ "$outcache" != "" ]]; then
+			out+="🎤$outcache "
+		fi
+	fi
 
+	outcache=""
+	dev="$(wpctl inspect @DEFAULT_AUDIO_SINK@ | grep ' node.description =' | cut -d\" -f2)"
+	case "$dev" in
+		"Built-in Audio Analog Stereo"|"Family 17h/19h HD Audio Controller Speaker + Headphones")
+			;;
+		"ThinkPad Dock USB Audio Analog Stereo"|"ThinkPad USB-C Dock Gen2 USB Audio Analog Stereo")
+			outcache+="Dock"
+			;;
+		"Jabra SPEAK 410 Analog Stereo")
+			outcache+="Jabra"
+			;;
+		*)
+			outcache+="$dev"
+			;;
+	esac
+	if [[ "$("$(dirname "$0")/wpctl-status" @DEFAULT_AUDIO_SINK@)" == 0 ]]; then
+		out+="🔇"
+	else
+		out+="🔉"
+	fi
+	if [[ "$outcache" != "" ]]; then
+		out+="$outcache "
+	fi
+
+	out+="	"
 
 	case "$(swaymsg -t get_inputs | jq -r 'map(select(has("xkb_active_layout_name")))[0].xkb_active_layout_name')" in
 		"Estonian (no dead keys)")
