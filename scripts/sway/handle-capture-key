@@ -1,0 +1,39 @@
+#!/bin/bash
+set -euo pipefail
+
+presentpipe="$XDG_RUNTIME_DIR/pipectl.""$(id -u)"".wl-present.pipe"
+
+freezestate="$XDG_RUNTIME_DIR/wl-present-isfrozen"
+case "$1" in
+	normal)
+		if [[ ! -p "$presentpipe" ]]; then
+			exit # do nothing
+		fi
+	
+		if [[ "$(cat "$freezestate")" == 1 ]]; then
+			"$(dirname "$0")"/wl-present unfreeze
+			echo 0 > "$freezestate"
+			exit
+		fi
+
+		"$(dirname "$0")"/wl-present freeze
+		echo 1 > "$freezestate"
+		;;
+	shift)
+		if [[ -p "$presentpipe" ]]; then
+			"$(dirname "$0")"/wl-present set-region
+			exit
+		fi
+		
+		grim -g "$(slurp)" - | wl-copy
+		;;
+	ctrl)
+		if [[ ! -p "$presentpipe" ]]; then
+			echo 0 > "$freezestate"
+			"$(dirname "$0")"/wl-present mirror
+		fi
+		;;
+	*)
+		echo unknown mode
+		exit 1
+esac

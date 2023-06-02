@@ -4,7 +4,7 @@ set -uo pipefail
 # expected to be executed every $1 seconds
 while true; do
 out=""
-	out+="⏲️$(cat "$HOME/.cache/poll-timetagger")	"
+	out+="⏲️$(cat "$XDG_RUNTIME_DIR/poll-timetagger")	"
 
 	outcache=""
 	dev="$(wpctl inspect @DEFAULT_AUDIO_SOURCE@ | grep ' node.description =' | cut -d\" -f2)"

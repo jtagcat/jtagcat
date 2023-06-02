@@ -23,6 +23,15 @@ function default {
 
 pendingclear=0
 while true; do
+	while [[ "$(cat "$XDG_RUNTIME_DIR/wl-present-isfrozen")" == 1 ]]; do
+		delay=0.5
+		swaymsg bar "$1" colors background 7fb06d
+		swaymsg bar "$1" colors statusline ffffff
+		sleep "$delay"
+		default
+		sleep "$delay"
+	done
+
 	while [[ "$(cat /sys/class/power_supply/AC/online)" == 0 && "$(cat /sys/class/power_supply/BAT0/capacity)" -le "$4" ]]; do
 		warn_bg="$5" warn_fg="$6" delay=2
 		if [[ "$(cat /sys/class/power_supply/BAT0/capacity)" -le "$7" ]]; then
@@ -35,7 +44,7 @@ while true; do
 		sleep "$delay"
 	done
 
-	if [[ "$(cat "$HOME/.cache/poll-timetagger")" == "" ]]; then
+	if [[ "$(cat "$XDG_RUNTIME_DIR/poll-timetagger")" == "" ]]; then
 		swaymsg bar "$1" colors background 0f3d57
 		swaymsg bar "$1" colors statusline ffffff
 		pendingclear=1
@@ -45,5 +54,6 @@ while true; do
 			pendingclear=0
 		fi
 	fi
-sleep 10
+sleep 5
 done
+
