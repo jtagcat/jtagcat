@@ -1,0 +1,23 @@
+#!/bin/bash
+# from https://unix.stackexchange.com/a/7012/389250
+read -p 'Directory to save files: ' filesdirectory # where are we doing stuff?
+mkdir -p $filesdirectory
+vi $filesdirectory/.yt-index
+youtube-dl --get-id --flat-playlist --batch-file $filesdirectory/.yt-index > $filesdirectory/.index
+sort $filesdirectory/.index | uniq -u > $filesdirectory/.deduped # dedupe entries
+counter=0
+for i in $(cat < "$filesdirectory/.deduped"); do
+((counter++))
+pagetitle=$(wget -qO- https://www.youtube.com/watch?v=$i | gawk -v IGNORECASE=1 -v RS='</title' 'RT{gsub(/.*<title[^>]*>/,"");print;exit}' | sed -e "s/\&quot;/'/g") # get page <title>
+echo From: Your Dear Youtube Fellows >> $filesdirectory/$counter.eml
+echo MIME-Version: 1.0 >> $filesdirectory/$counter.eml
+videotitle=$(wget -qO- https://www.youtube.com/watch?v=$i | gawk -v IGNORECASE=1 -v RS='</meta name' 'RT{gsub(/.*<meta name[^>]*>/,"");print;exit}' | sed -e "s/\&quot;/'/g") # get page <title>
+
+gawk -v IGNORECASE=1 -v RS='</meta' 'RT{gsub(/.*<meta[^>]*>/,"");print;exit}'
+echo Subject: $pagetitle >> $filesdirectory/$counter.eml
+echo Content-Transfer-Encoding: 8bit >> $filesdirectory/$counter.eml
+echo Content-Base: https://www.youtube.com/watch?v=$i >> $filesdirectory/$counter.eml # shows up as 'website'
+echo 'Content-Type: text/html; charset=UTF-8' >> $filesdirectory/$counter.eml
+echo 'Date: Fri, 1 Jan 2010 00:00:00 +0000' >> $filesdirectory/$counter.eml
+done
+rm -f $filesdirectory/.index $filesdirectory/.deduped $filesdirectory/.yt-index
