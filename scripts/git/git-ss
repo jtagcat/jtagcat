@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -eou pipefail
+
+if [[ "$#" != 1 ]]; then
+	echo "ERR: expected exactly 1 argument: filename"
+	exit 1
+fi
+
+if [[ ! -f "$1" ]]; then
+	echo "ERR: expexcted file"
+	exit 1
+fi
+
+git stripspace < "$1" > "$1"
