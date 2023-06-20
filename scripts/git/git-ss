@@ -11,4 +11,5 @@ if [[ ! -f "$1" ]]; then
 	exit 1
 fi
 
-git stripspace < "$1" > "$1"
+git stripspace < "$1" > "$1.git-ss.tmp"
+mv "$1.git-ss.tmp" "$1"

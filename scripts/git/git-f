@@ -2,4 +2,3 @@
 set -eou pipefail
 
 git push --force-with-lease
-
