@@ -5,10 +5,20 @@ if [[ "$#" != 1 ]]; then
 	echo expected exaxtly 1 argument: output directory
 fi
 
+# https://stackoverflow.com/a/37840948/12470046
+function urldecode() { : "${*//+/ }"; echo -e "${_//%/\\x}"; }
+
 ext=""
 case "$(wl-paste | file - --mime-type -b)" in
 	"text/plain")
 		ext=".txt"
+
+		txt="$(wl-paste)"
+		if [[ "$txt" == "file://"* ]]; then
+			source="$(urldecode "$(cut -c 8- <<< "$txt")")"
+			cp "$source" "$1"/
+			exit 0
+		fi
 		;;
 	"image/png")
 		ext=".png"
