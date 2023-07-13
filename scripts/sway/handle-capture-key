@@ -27,6 +27,9 @@ case "$1" in
 		
 		grim -g "$(slurp)" - | wl-copy
 		;;
+	alt)
+		grim - | wl-copy #TODO:
+		;;
 	ctrl)
 		if [[ ! -p "$presentpipe" ]]; then
 			echo 0 > "$freezestate"
