@@ -44,16 +44,16 @@ while true; do
 		sleep "$delay"
 	done
 
-	if [[ "$(cat "$XDG_RUNTIME_DIR/poll-timetagger")" == "" ]]; then
-		swaymsg bar "$1" colors background 0f3d57
-		swaymsg bar "$1" colors statusline ffffff
-		pendingclear=1
-	else
-		if [[ "$pendingclear" == 1 ]]; then
-			default
-			pendingclear=0
-		fi
-	fi
+#	if [[ "$(cat "$XDG_RUNTIME_DIR/poll-timetagger")" == "" ]]; then
+#		swaymsg bar "$1" colors background 0f3d57
+#		swaymsg bar "$1" colors statusline ffffff
+#		pendingclear=1
+#	else
+#		if [[ "$pendingclear" == 1 ]]; then
+#			default
+#			pendingclear=0
+#		fi
+#	fi
 sleep 5
 done
 
