@@ -51,6 +51,16 @@ out=""
 			outcache+="$dev"
 			;;
 	esac
+
+	status="$(bluetoothctl show | grep Powered | sed 's/[[:space:]]*Powered: //g')"
+	if [[ "$status" == "yes" ]]; then
+		if bluetoothctl devices Connected | grep -q Device; then
+			out+="🔹"
+		else
+			out+="🫧"
+		fi
+	fi
+
 	if [[ "$("$(dirname "$0")/wpctl-status" @DEFAULT_AUDIO_SINK@)" == 0 ]]; then
 		out+="🔇"
 	else
