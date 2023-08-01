@@ -189,6 +189,12 @@ jq 'keys'
 ```sh
 jq '[.[] | {endTime, msPlayed}]'
 ```
+
+jq 1.7:
+```sh
+jq 'pick(.endTime, .msPlayed)'
+```
+
 #### Output
 ```json
 [
