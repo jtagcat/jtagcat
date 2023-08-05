@@ -95,6 +95,9 @@ out=""
 	fi
 	out+="$(cat /sys/class/power_supply/BAT0/capacity)%"
 	
+	if [[ "$(nmcli radio wifi)" != "enabled" ]]; then
+		out+=" ⚓️"
+	fi
 
 	out+=" $(date +'%Y-%m-%d %H:%M:%S')"
 
