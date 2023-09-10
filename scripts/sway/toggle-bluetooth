@@ -9,6 +9,7 @@ if [[ "$status" == "yes" ]]; then
 	notify-send -t 1500 "Bluetooth off"
 else
 	wpctl set-mute @DEFAULT_AUDIO_SINK@ 1
+	rfkill unblock bluetooth
 	bluetoothctl power on
 	bluetoothctl discoverable off
 	name="$(bluetoothctl info "$1" | grep Name | cut -d: -f 2 | cut -c2-)"
