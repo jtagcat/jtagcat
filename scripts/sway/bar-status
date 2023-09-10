@@ -56,6 +56,9 @@ out=""
 		"Jabra SPEAK 410 Analog Stereo")
 			outcache+="Jabra"
 			;;
+		"(4D)Logitech Adapter")
+			outcache="!! BT"
+			;;
 		*)
 			outcache+="$dev"
 			;;
@@ -97,6 +100,8 @@ out=""
 	
 	if [[ "$(nmcli radio wifi)" != "enabled" ]]; then
 		out+=" ⚓️"
+	elif [[ "$(nmcli -f type connection show --active | awk '$1 == "wifi"')" == "" ]]; then
+		out+=" 🌊"
 	fi
 
 	out+=" $(date +'%Y-%m-%d %H:%M:%S')"
