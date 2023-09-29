@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -eou pipefail
+source /home/jc/crontab/env
+
+if [ "$EUID" -ne 0 ]; then
+	echo "ERROR: Can't (un)mount zfs stuff without root :("
+	exit 1
+fi
+
+mountds="$1" # tanker/_hellobak/$(date -u --rfc-3339=seconds | cut -d+ -f1)Z
+rootdataset="$2" # tanker/hello
+
+tempfile="$(mktemp)"
+
+zfs list -H -o name -r "$rootdataset" | while IFS= read -r ds; do
+	latestsnap="$(zfs list -t snap -H -S creation -o name "$ds" | head -n1)"
+	newpath="$(echo "$mountds/${ds#"$rootdataset"}" | sed 's#//*#/#g')"
+	zfs clone "$latestsnap" "${newpath%/}"
+	echo "$latestsnap" >> "$tempfile"
+done
+
+chmod 664 "$tempfile"
+mv "$tempfile" "/$mountds/snapshot.list"
