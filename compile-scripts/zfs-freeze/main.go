@@ -55,14 +55,20 @@ func main() {
 		usage()
 	case "--destroy", "-d":
 		ensureArgCount(2)
-		Destroy(ctx, os.Args[2])
+		if err := Destroy(ctx, os.Args[2]); err != nil {
+			err.(std.SlogError).Wrap(slog.LevelInfo, "destroying freeze").LogD()
+			os.Exit(1)
+		}
 	default:
 		ensureArgCount(2)
-		Freeze(ctx, os.Args[1], os.Args[2])
+		if err := Freeze(ctx, os.Args[1], os.Args[2]); err != nil {
+			err.(std.SlogError).Wrap(slog.LevelInfo, "creating freeze").LogD()
+			os.Exit(1)
+		}
 	}
 }
 
-func Freeze(ctx context.Context, targetDataset, freezeName string) {
+func Freeze(ctx context.Context, targetDataset, freezeName string) error {
 	targetParent, targetName, ok := std.RevCut(targetDataset, "/")
 	if !ok {
 		targetName = targetParent // dataset is top level
@@ -72,16 +78,14 @@ func Freeze(ctx context.Context, targetDataset, freezeName string) {
 
 	snapFile := filepath.Join("/", freezeRoot, "snapshot.list")
 	if _, err := os.Stat(snapFile); !os.IsNotExist(err) {
-		slog.Error("preparing snapshot.list", slog.Any("error", "file exists"), slog.String("path", snapFile))
-		os.Exit(1)
+		return std.SlogWrap(slog.LevelWarn, "snapshot.list already exists", slog.String("path", snapFile), slog.String("freeze", freezeRoot))
 	}
 
 	//
 
 	datasets, err := datasetList(ctx, targetDataset)
 	if err != nil {
-		slog.Error("listing target datasets", slog.Any("zfs list", err.Error()))
-		os.Exit(1)
+		return err
 	}
 
 	var report string
@@ -89,36 +93,39 @@ func Freeze(ctx context.Context, targetDataset, freezeName string) {
 	for _, dataset := range datasets {
 		snap, err := latestSnapshot(ctx, dataset)
 		if err != nil {
-			slog.Error("getting latest snapshot", slog.Any("zfs list", err.Error()), slog.String("dataset", dataset))
-			os.Exit(1)
+			return err.(std.SlogError).Wrap(slog.LevelDebug, "getting latest snapshot", slog.String("freeze", freezeRoot))
 		}
 
 		snapDestination := std.SafeJoin(freezeRoot, strings.TrimPrefix(dataset, targetDataset))
 
-		if err := cloneSnapshot(ctx, snap, snapDestination); err != nil {
-			slog.Error("cloning snapshot", slog.Any("zfs clone", err.Error()), slog.String("snapshot", snap), slog.String("destination", snapDestination))
-			os.Exit(1)
+		_, _, err = std.RunWithStdouts(exec.CommandContext(ctx,
+			"zfs", "clone", "--",
+			snap, snapDestination,
+		), true)
+
+		if err != nil {
+			return std.SlogWrap(slog.LevelError, "cloning snapshot", slog.String("snapshot", snap), slog.String("destination", snapDestination), std.SlogNamedErr("zfs clone", err), slog.String("freeze", freezeRoot))
 		}
 
 		report += snap + "\n"
 	}
 
 	if err := writeReport(snapFile, report); err != nil {
-		slog.Error("writing snapshot.list", slog.Any("error", err.Error()), slog.String("path", snapFile))
-		os.Exit(1)
+		return err.(std.SlogError).Wrap(slog.LevelInfo, "writing snapshot.list", slog.String("freeze", freezeRoot))
 	}
 
 	fmt.Println(freezeRoot)
+	return nil
 }
 
-func datasetList(ctx context.Context, root_dataset string) ([]string, error) {
+func datasetList(ctx context.Context, targetDataset string) ([]string, error) {
 	stdout, _, err := std.RunWithStdouts(exec.CommandContext(ctx,
 		"zfs", "list", "-H", "-r",
 		"-o", "name", "-s", "name",
-		"--", root_dataset,
+		"--", targetDataset,
 	), true)
 	if err != nil {
-		return nil, err
+		return nil, std.SlogWrap(slog.LevelError, "listing dataset", slog.String("target", targetDataset), std.SlogNamedErr("zfs list", err))
 	}
 
 	return strings.Split(stdout, "\n"), nil
@@ -134,59 +141,43 @@ func latestSnapshot(ctx context.Context, dataset string) (string, error) {
 		"--", dataset,
 	), true)
 	if err != nil {
-		return "", err
+		return "", std.SlogWrap(slog.LevelError, "listing snapshots", slog.String("target", dataset), std.SlogNamedErr("zfs list", err))
 	}
 
 	if stdout == "" {
-		return "", errNoSnapshots
+		return "", std.SlogWrap(slog.LevelError, "dataset has no snapshos", slog.String("target", dataset))
 	}
 
 	return strings.Split(stdout, "\n")[0], nil
 }
 
-func cloneSnapshot(ctx context.Context, snapshot, target string) error {
-	_, _, err := std.RunWithStdouts(exec.CommandContext(ctx,
-		"zfs", "clone", "--",
-		snapshot, target,
-	), true)
-
-	return err
-}
-
-func writeReport(name string, content string) error {
-	snapshotReport, err := renameio.NewPendingFile(name)
+func writeReport(path string, content string) error {
+	snapshotReport, err := renameio.NewPendingFile(path)
 	if err != nil {
-		return err
+		return std.SlogWrap(slog.LevelError, "creating file", std.SlogErr(err), slog.String("path", path))
 	}
 
 	if _, err := snapshotReport.WriteString(content); err != nil {
-		return err
+		return std.SlogWrap(slog.LevelError, "writing to file", std.SlogErr(err), slog.String("path", path))
 	}
 
 	if err := snapshotReport.CloseAtomicallyReplace(); err != nil {
-		return err
+		return std.SlogWrap(slog.LevelError, "atomically replacing file", std.SlogErr(err), slog.String("path", path))
 	}
 
-	if err := os.Chown(name, os.Getuid(), os.Getgid()); err != nil {
-		return err
+	if err := os.Chown(path, os.Getuid(), os.Getgid()); err != nil {
+		return std.SlogWrap(slog.LevelError, "changing file permissions", std.SlogErr(err), slog.String("path", path))
 	}
 
 	return nil
 }
 
-func Destroy(ctx context.Context, dataset string) {
-	argCount := 1
-	if len(os.Args)-1-1 != argCount {
-		slog.Error("expected exact number of arguments", slog.Int("got", len(os.Args)-1), slog.Int("want", argCount))
-		usage()
-	}
-
+func Destroy(ctx context.Context, dataset string) error {
 	_, cutSection, ok1 := strings.Cut(dataset, "/_freeze_")
 	beforeCut, afterCut, _ := strings.Cut(cutSection, "/")
 
 	if !ok1 || beforeCut == "" || afterCut == "" {
-		slog.Error("dataset name does not have authorized .../_freeze_*/ as its parent", slog.String("dataset", dataset))
-		os.Exit(1)
+		return std.SlogWrap(slog.LevelError, "not a freeze: dataset name does not have .../_freeze_*/ as its parent", slog.String("dataset", dataset))
 	}
 
 	_, _, err := std.RunWithStdouts(exec.CommandContext(ctx,
@@ -194,7 +185,8 @@ func Destroy(ctx context.Context, dataset string) {
 		"--", dataset,
 	), true)
 	if err != nil {
-		slog.Error("destroying dataset", slog.Any("error", err.Error()), slog.String("dataset", dataset))
-		os.Exit(1)
+		return std.SlogWrap(slog.LevelError, "destroying dataset", std.SlogNamedErr("zfs destroy", err), slog.String("dataset", dataset))
 	}
+
+	return nil
 }
