@@ -49,7 +49,9 @@ func main() {
 	ctx := context.Background()
 	signal.NotifyContext(ctx, os.Interrupt)
 
-	ensureArgCount(1)
+	if len(os.Args)-1 < 1 {
+		usage()
+	}
 	switch os.Args[1] {
 	case "--help":
 		usage()
