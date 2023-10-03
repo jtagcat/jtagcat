@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -eou pipefail
+
+echo "$(date -u --rfc-3339=seconds | cut -d+ -f1 | sed 's/ /_/')"Z
