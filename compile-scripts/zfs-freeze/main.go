@@ -15,7 +15,7 @@ import (
 	"github.com/jtagcat/util/std"
 )
 
-const version = "v1.0.0"
+const version = "v1.1.0"
 
 func usage() {
 	fmt.Println(
@@ -175,6 +175,8 @@ func writeReport(path string, content string) error {
 }
 
 func Destroy(ctx context.Context, dataset string) error {
+	dataset = strings.TrimPrefix(dataset, "/") // allows for specifying path instead of dataset
+
 	_, cutSection, ok1 := strings.Cut(dataset, "/_freeze_")
 	beforeCut, afterCut, _ := strings.Cut(cutSection, "/")
 
