@@ -5,6 +5,9 @@ Recursively clones latest snapshots of datasets in a given dataset. This exposes
 ## Usage
 ```
 go build .
+# or without cloning: go install github.com/jtagcat/jtagcat/compile-scripts/zfs-freeze@latest
+# → binary will be at $GOPATH/bin/zfs-freeze
+
 sudo chown root:root zfs-freeze
 sudo chmod 4755 zfs-freeze
 sudo mv zfs-freeze /usr/local/bin
