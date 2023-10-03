@@ -33,43 +33,44 @@ func usage() {
 	os.Exit(64)
 }
 
+func ensureArgCount(want int) {
+	if len(os.Args)-1 != want {
+		slog.Error("expected exact number of arguments", slog.Int("got", len(os.Args)-1), slog.Int("want", want))
+		usage()
+	}
+}
+
 func main() {
 	if os.Geteuid() != 0 {
-		slog.Error("Must run with effective UID of root to mount zfs clones", slog.Int("euid", os.Geteuid()))
+		slog.Error("Must run with effective UID of root to mount zfs clones", slog.Int("euid", os.Geteuid())) // if anyone knows any other way with zfs allow and alike, lmk
 		os.Exit(1)
 	}
 
 	ctx := context.Background()
 	signal.NotifyContext(ctx, os.Interrupt)
 
-	if len(os.Args)-1 < 1 {
-		usage()
-	}
+	ensureArgCount(1)
 	switch os.Args[1] {
 	case "--help":
 		usage()
 	case "--destroy", "-d":
-		mainDestroy(ctx)
-		os.Exit(0)
+		ensureArgCount(2)
+		Destroy(ctx, os.Args[2])
+	default:
+		ensureArgCount(2)
+		Freeze(ctx, os.Args[1], os.Args[2])
 	}
+}
 
-	argCount := 2
-	if len(os.Args)-1 != argCount {
-		slog.Error("expected exact number of arguments", slog.Int("got", len(os.Args)-1), slog.Int("want", argCount))
-		usage()
-	}
-
-	//
-
-	rootDataset := os.Args[1]
-	rootParent, rootName, ok := std.RevCut(rootDataset, "/")
+func Freeze(ctx context.Context, targetDataset, freezeName string) {
+	targetParent, targetName, ok := std.RevCut(targetDataset, "/")
 	if !ok {
-		rootName = rootParent
+		targetName = targetParent // dataset is top level
 	}
 
-	destination := std.SafeJoin(rootParent, "_freeze_"+rootName, os.Args[2])
+	freezeRoot := std.SafeJoin(targetParent, "_freeze_"+targetName, freezeName)
 
-	snapFile := filepath.Join("/", destination, "snapshot.list")
+	snapFile := filepath.Join("/", freezeRoot, "snapshot.list")
 	if _, err := os.Stat(snapFile); !os.IsNotExist(err) {
 		slog.Error("preparing snapshot.list", slog.Any("error", "file exists"), slog.String("path", snapFile))
 		os.Exit(1)
@@ -77,7 +78,7 @@ func main() {
 
 	//
 
-	datasets, err := datasetList(ctx, rootDataset)
+	datasets, err := datasetList(ctx, targetDataset)
 	if err != nil {
 		slog.Error("listing target datasets", slog.Any("zfs list", err.Error()))
 		os.Exit(1)
@@ -92,7 +93,7 @@ func main() {
 			os.Exit(1)
 		}
 
-		snapDestination := std.SafeJoin(destination, strings.TrimPrefix(dataset, rootDataset))
+		snapDestination := std.SafeJoin(freezeRoot, strings.TrimPrefix(dataset, targetDataset))
 
 		if err := cloneSnapshot(ctx, snap, snapDestination); err != nil {
 			slog.Error("cloning snapshot", slog.Any("zfs clone", err.Error()), slog.String("snapshot", snap), slog.String("destination", snapDestination))
@@ -102,28 +103,12 @@ func main() {
 		report += snap + "\n"
 	}
 
-	snapshotReport, err := renameio.NewPendingFile(snapFile)
-	if err != nil {
-		slog.Error("creating snapshot.list", slog.Any("error", err.Error()), slog.String("path", snapFile))
-		os.Exit(1)
-	}
-
-	if _, err := snapshotReport.WriteString(report); err != nil {
-		slog.Error("writing to snapshot.list", slog.Any("error", err.Error()), slog.String("path", snapshotReport.Name()))
-		os.Exit(1)
-	}
-
-	if err := snapshotReport.CloseAtomicallyReplace(); err != nil {
+	if err := writeReport(snapFile, report); err != nil {
 		slog.Error("writing snapshot.list", slog.Any("error", err.Error()), slog.String("path", snapFile))
 		os.Exit(1)
 	}
 
-	if err := os.Chown(snapFile, os.Getuid(), os.Getgid()); err != nil {
-		slog.Error("changing permissions for snapshot.list", slog.Any("error", err.Error()), slog.String("path", snapFile))
-		os.Exit(1)
-	}
-
-	fmt.Println(destination)
+	fmt.Println(freezeRoot)
 }
 
 func datasetList(ctx context.Context, root_dataset string) ([]string, error) {
@@ -168,14 +153,34 @@ func cloneSnapshot(ctx context.Context, snapshot, target string) error {
 	return err
 }
 
-func mainDestroy(ctx context.Context) {
+func writeReport(name string, content string) error {
+	snapshotReport, err := renameio.NewPendingFile(name)
+	if err != nil {
+		return err
+	}
+
+	if _, err := snapshotReport.WriteString(content); err != nil {
+		return err
+	}
+
+	if err := snapshotReport.CloseAtomicallyReplace(); err != nil {
+		return err
+	}
+
+	if err := os.Chown(name, os.Getuid(), os.Getgid()); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func Destroy(ctx context.Context, dataset string) {
 	argCount := 1
 	if len(os.Args)-1-1 != argCount {
 		slog.Error("expected exact number of arguments", slog.Int("got", len(os.Args)-1), slog.Int("want", argCount))
 		usage()
 	}
 
-	dataset := os.Args[2]
 	_, cutSection, ok1 := strings.Cut(dataset, "/_freeze_")
 	beforeCut, afterCut, _ := strings.Cut(cutSection, "/")
 
