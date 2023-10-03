@@ -1,4 +1,4 @@
-module github.com/jtagcat/jtagcat/compile-scripts/sys/zfs-freeze
+module github.com/jtagcat/jtagcat/compile-scripts/zfs-freeze
 
 go 1.21.1
 
