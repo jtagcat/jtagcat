@@ -47,7 +47,7 @@ func main() {
 	}
 
 	ctx := context.Background()
-	signal.NotifyContext(ctx, os.Interrupt)
+	ctx, _ = signal.NotifyContext(ctx, os.Interrupt)
 
 	if len(os.Args)-1 < 1 {
 		usage()
