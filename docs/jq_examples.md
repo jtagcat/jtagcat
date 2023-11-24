@@ -99,6 +99,78 @@ jq '{"listen_type": "import", "payload": (.[] |= {"listened_at": (.endTime | spl
 }
 ```
 
+### Construct an object from array, alternative
+#### Input
+```json
+[
+  {
+    "@starttime": "1700662366",
+    "@endtime": "1700662673",
+    "address": {
+      "@addr": "99.99.99.99",
+      "@addrtype": "ipv4"
+    },
+    "hostnames": {
+      "hostname": [
+        {
+          "@name": "test.ee",
+          "@type": "user"
+        },
+        {
+          "@name": "pest.ee",
+          "@type": "PTR"
+        }
+      ]
+    }
+  },
+  {
+    "@starttime": "1700662366",
+    "@endtime": "1700662673",
+    "address": {
+      "@addr": "99.99.99.88",
+      "@addrtype": "ipv4"
+    },
+    "hostnames": {
+      "hostname": [
+        {
+          "@name": "kest.ee",
+          "@type": "user"
+        },
+        {
+          "@name": "sest.ee",
+          "@type": "PTR"
+        }
+      ]
+    }
+  }
+]
+```
+
+#### Command
+```sh
+jq '[.[] | {"addr": .address."@addr", "hostnames": [.hostnames.hostname[]."@name"?] }]'
+```
+
+#### Output
+```json
+[
+  {
+    "addr": "99.99.99.99",
+    "hostnames": [
+      "test.ee",
+      "pest.ee"
+    ]
+  },
+  {
+    "addr": "99.99.99.88",
+    "hostnames": [
+      "kest.ee",
+      "sest.ee"
+    ]
+  }
+]
+```
+
 ### Split to multiple files with filename from key
 #### Input
 ```json
