@@ -4,5 +4,5 @@
 
 The bio doesn't have git history, so let's plop it here as well:
 ```
-Data and tab hoarder researching, tinkering, designing (developing k8s?) Married to data, sound and language. I do not forget to eat daily!
+Data and tab hoarder researching, tinkering, and designing around (k8s?). Married to data, sound and language.
 ```
