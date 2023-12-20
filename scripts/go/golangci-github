@@ -20,16 +20,25 @@ on:
   push:
   pull_request:
 
-jobs:
-  golangci:
-    name: "Run linter (golangci-lint)"
-    runs-on: "ubuntu-latest"
-    steps:
-      - uses: "actions/checkout@v3"
+permissions:
+  contents: read
+  pull-requests: read
 
-      - name: "Run golangci-lint"
-        id: "run-linter"
-        uses: "golangci/golangci-lint-action@v3"
+jobs:
+  # https://github.com/golangci/golangci-lint-action
+  golangci:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '>=1.21'
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: latest
+          only-new-issues: true
 EOF
 git add .github/workflows/golangci-lint.yml
 git commit -m'ci: add gh actions golangci-lint'
