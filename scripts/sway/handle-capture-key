@@ -7,7 +7,8 @@ freezestate="$XDG_RUNTIME_DIR/wl-present-isfrozen"
 case "$1" in
 	normal)
 		if [[ ! -p "$presentpipe" ]]; then
-			exit # do nothing
+			wl-copy --clear
+			exit
 		fi
 	
 		if [[ "$(cat "$freezestate")" == 1 ]]; then
