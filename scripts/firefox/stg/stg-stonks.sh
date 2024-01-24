@@ -4,7 +4,8 @@ set -eou pipefail
 function stgfile {
     timestamp="$(jq -r '.autoBackupLastBackupTimeStamp' "$1")"
     count="$(jq '[ .groups[].tabs[] , .pinnedTabs[]? ] | length' "$1")"
-    echo "${timestamp};${count};$(basename "$1")"
+    profile="$(jq -r '.autoBackupFolderName' "$1")"
+    echo "${timestamp};${count};${profile};$(basename "$1")"
 }
 
 function bakdir {
