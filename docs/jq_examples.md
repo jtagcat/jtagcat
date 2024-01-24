@@ -423,3 +423,22 @@ jq '[ .a[] , .b[] ]'
   }
 ]
 ```
+
+### Format values
+#### Input
+```json
+{
+  "a": "hello",
+  "b": {
+    "c": "world"
+  }
+}
+```
+#### Command
+```sh
+jq -r '"\(.a) \(.b.c)!"'
+```
+#### Output
+```plain
+hello world!
+```
