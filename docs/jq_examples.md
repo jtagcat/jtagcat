@@ -391,3 +391,35 @@ jq --arg key "bar" --arg val "hello"  '. * {($key): {"myValue": $val, "msPlayed"
   }
 }
 ```
+
+### Merge arrays
+#### Input
+```json
+{
+  "a": [
+    {
+      "hello": null
+    }
+  ],
+  "b": [
+    {
+      "world": null
+    }
+  ]
+}
+```
+#### Command
+```sh
+jq '[ .a[] , .b[] ]'
+```
+#### Output
+```json
+[
+  {
+    "hello": null
+  },
+  {
+    "world": null
+  }
+]
+```
