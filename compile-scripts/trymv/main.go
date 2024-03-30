@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"crypto/sha256"
+	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -16,10 +17,17 @@ func usage() {
 	fmt.Printf(
 		"Merge duplicate directories while keeping the conflicts.\n"+
 			"\n"+
+			"ENVIRONMENT: IGNORE_MODTIME, DELETE_ONLY, DEBUG\n"+
+			"\n"+
 			"USAGE: %s <source> <dest>\n", os.Args[0])
 
 	os.Exit(64)
 }
+
+var (
+	IGNORE_MODTIME, _ = strconv.ParseBool(os.Getenv("IGNORE_MODTIME"))
+	DELETE_ONLY, _    = strconv.ParseBool(os.Getenv("DELETE_ONLY"))
+)
 
 func main() {
 	if ok, _ := strconv.ParseBool(os.Getenv("DEBUG")); ok {
@@ -40,6 +48,8 @@ func main() {
 	}
 }
 
+var ErrorSkipMove = errors.New("move skipped")
+
 func walk(srcAbs, dstAbs string) error {
 	slog.Debug("walking", slog.String("src", srcAbs))
 
@@ -51,8 +61,13 @@ func walk(srcAbs, dstAbs string) error {
 	dstInfo, err := os.Stat(dstAbs)
 	if err != nil {
 		if os.IsNotExist(err) {
-			slog.Debug("moving", slog.String("src", srcAbs))
-			return os.Rename(srcAbs, dstAbs)
+			if DELETE_ONLY {
+				slog.Debug("skipping move", slog.String("src", srcAbs))
+				return ErrorSkipMove
+			} else {
+				slog.Debug("moving", slog.String("src", srcAbs))
+				return os.Rename(srcAbs, dstAbs)
+			}
 		}
 
 		return err
@@ -78,7 +93,9 @@ func walk(srcAbs, dstAbs string) error {
 	for _, srcChild := range listing {
 		if err := walk(filepath.Join(srcAbs, srcChild.Name()), filepath.Join(dstAbs, srcChild.Name())); err != nil {
 			keepDir = true
-			slog.Error("child:", slog.String("err", err.Error()))
+			if !errors.Is(err, ErrorSkipMove) {
+				slog.Error("child:", slog.String("err", err.Error()))
+			}
 		}
 	}
 
@@ -96,10 +113,9 @@ func diff(srcAbs, dstAbs string, srcInfo, dstInfo fs.FileInfo) error {
 		return fmt.Errorf("size mismatch: %d in source, %d in destination", srcInfo.Size(), dstInfo.Size())
 	}
 
-	// TODO:
-	// if srcInfo.ModTime() != dstInfo.ModTime() {
-	// 	return fmt.Errorf("modtime mismatch: %v in source, %v in destination", srcInfo.ModTime(), dstInfo.ModTime())
-	// }
+	if !IGNORE_MODTIME && srcInfo.ModTime() != dstInfo.ModTime() {
+		return fmt.Errorf("modtime mismatch: %v in source, %v in destination", srcInfo.ModTime(), dstInfo.ModTime())
+	}
 
 	srcSum, err := sum(srcAbs)
 	if err != nil {
