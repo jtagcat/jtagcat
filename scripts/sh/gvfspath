@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -eou pipefail
+
+if [[ "$1" == "/run/user/"*"/gvfs/"* ]]; then
+	echo "/$(cut -d/ -f 7- <<< "$1")"
+else
+	echo "$1"
+fi
