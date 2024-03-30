@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+if [[ "$#" != 5 ]]; then
+	echo "USAGE: <file/dir> <disableNo> <enableNo> <subDisable> <subEnable>"
+	exit 1
+fi
+
+function one {
+	jas="$(dirname "$1")/jas_$(basename "$1")"
+	ffmpeg -hide_banner -loglevel warning -i "$1" -map 0:v -map 0:a -map 0:s? -c copy -disposition:a:$2 0 -disposition:a:$3 default -disposition:s:$4 0 -disposition:s:$5 default "$jas" \
+		&& mv "$jas" "$1"
+}
+
+
+if [[ ! -d "$1" ]]; then
+	one "$1" "$2" "$3" "$4" "$5"
+else
+	for i in "$1"/*; do
+		one "$i" "$2" "$3" "$4" "$5"
+	done
+fi
