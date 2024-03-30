@@ -6,4 +6,4 @@ if [[ -z "$2" ]]; then # empty
         out="$(exteat <<< "$1")_h265.$(extget <<< "$1")"
 fi
 
-ffmpeg -hide_banner -loglevel warning -i "$1" -map 0 -c copy -c:v libx265 "$out"
+ffmpeg -hide_banner -loglevel warning -i "$1" -map 0 -c:s copy -c:a copy -c:v libx265 -x265-params log-level=warning "$out"
