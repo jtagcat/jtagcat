@@ -1,4 +1,4 @@
-## How I follow gh orgs
+## Following gh orgs
 On https://github.com/dgtlmoon/changedetection.io
  - URL: https://api.github.com/graphql
  - Filter: `json:$` (pretty-print)

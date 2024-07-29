@@ -59,6 +59,12 @@ out=""
 		"(4D)Logitech Adapter")
 			outcache="!! BT"
 			;;
+		"WI-C100")
+			bluetoothctl devices Connected | grep -q 'blu WI-C100' && \
+				outcache+="blu "
+
+			outcache+="WI-C100"
+			;;
 		*)
 			outcache+="$dev"
 			;;
