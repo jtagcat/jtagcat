@@ -32,7 +32,7 @@ case "$1" in
 			exit
 		fi
 		
-		grim -g "$(slurp)" - | wl-copy
+		pidof -q slurp || grim -g "$(slurp)" - | wl-copy
 		;;
 	alt)
 		grim - | wl-copy #TODO:
