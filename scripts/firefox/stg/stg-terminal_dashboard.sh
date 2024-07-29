@@ -7,8 +7,12 @@
 
 backloc="$1"
 #hidelist="$2" # how to implement?
+loc2="$2"
+#loc3="$3"
 
 file="$backloc"/"$(exa --sort=new "$backloc" | tail -n 1)"
+cross2file="$loc2"/"$(exa --sort=new "$loc2" | tail -n 1)"
+#cross3file="$loc3"/"$(exa --sort=new "$loc3" | tail -n 1)"
 #datebase="$(rev <<< "$file" | cut -d@ -f 2 | cut -d- -f 1-4 | rev)" # rev implementation not needed anymore, retains compatability with different backup nameschemes.
 #stgepoch="$(date -ud "$(cut -d- -f 4-6 <<< "$file" | cut -d@ -f1)"T"$(cut -d~ -f 2 <<< "$datebase" | sed "s/-/:/")+00:00")" "+%s")"
 stgepoch="$(date -ud "$(cut -d- -f 5-7 <<< "$file" | cut -d@ -f1)" "+%s")"
@@ -18,6 +22,11 @@ epochdiff="$(echo "$(date "+%s")"-"$stgepoch" | bc)"
 echo "STG" "$(jq '.groups[] | select(.isArchive == false) | .tabs[].url' "$file" | wc -l)"/"$(jq '.groups[].tabs[].url' "$file" | wc -l)" -"$(date -d@"$epochdiff" -u +%H:%M:%S)" @"$(date -u +%H:%M:%S)"
 jq -r ".groups[].tabs[].url" "$file" | sort | grep -vFx "about:newtab" | grep -vFx "about:blank" | uniq -d | sort # duped tabs
 jq -r ".groups[].tabs[].url" "$file" | grep -Fx "about:blank" | uniq -c # blank tabs (tab rot!!)
+
+echo
+globcount="$(jq '.groups[].tabs[].url' "$file" "$cross2file" `#"$cross3file"` | wc -l)"
+echo global $globcount + mobiles, dupes:
+jq -r ".groups[].tabs[].url" "$file" "$cross2file" `#"$cross3file"` | sort | grep -vFx "about:newtab" | grep -vFx "about:blank" | uniq -d | sort # duped tabs
 
 echo
 
