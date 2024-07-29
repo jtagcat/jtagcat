@@ -32,10 +32,17 @@ while true; do
 		sleep "$delay"
 	done
 
+	notified=0
 	while [[ "$(cat /sys/class/power_supply/AC/online)" == 0 && "$(cat /sys/class/power_supply/BAT0/capacity)" -le "$4" ]]; do
 		warn_bg="$5" warn_fg="$6" delay=2
 		if [[ "$(cat /sys/class/power_supply/BAT0/capacity)" -le "$7" ]]; then
 			warn_bg="$8" warn_fg="$9" delay=0.5
+			if [[ "$notified" == 0 ]]; then
+				notify-send -t 5000 'Battery critical' "$(cat /sys/class/power_supply/BAT0/capacity)%"  # -u critical (doesn't respect -t)
+				notified=1
+			fi
+		else
+			notified=0
 		fi
 		swaymsg bar "$1" colors background "$warn_bg"
 		swaymsg bar "$1" colors statusline "$warn_fg"
