@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -eu
 
 presentpipe="$XDG_RUNTIME_DIR/pipectl.""$(id -u)"".wl-present.pipe"
 
@@ -7,7 +7,13 @@ freezestate="$XDG_RUNTIME_DIR/wl-present-isfrozen"
 case "$1" in
 	normal)
 		if [[ ! -p "$presentpipe" ]]; then
+			histNo="$(cliphist list | head -n1 | cut -f1)"
+			if [[ ! -e "$XDG_RUNTIME_DIR/cliplast" || "$(cat "$XDG_RUNTIME_DIR/cliplast" 2>&1 || echo 0)" != "$histNo" ]]; then
 			wl-copy --clear
+				cliphist delete <<< "$histNo"
+				cliphist list | head -n1 | cut -f1 > "$XDG_RUNTIME_DIR/cliplast"
+			fi
+
 			exit
 		fi
 	
