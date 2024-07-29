@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+if [[ "$#" -eq 2 ]]; then
+	echo "error: expected exactly 1 arg"
+	echo "USAGE: $0 <input.pdf>"
+	echo "Limitation: up to 1000 objects in a PDF, furhter operation provides no gurantees"
+	exit 1
+fi
+
+base="$(exteat <<< "$1")"
+pdfimages -p -png "$1" "$base"
+
+layerLookbehind=""
+pdfimages -list "$1"  | tail -n +3 | while read -r row; do
+	type="$(awk '{ print $3 }' <<< "$row")"
+	if [[ "$type" != "smask" ]]; then
+		layerLookbehind="$(printf "%03d" "$(awk '{ print $2 }' <<< "$row")")"
+		continue
+	fi
+
+	page="$(printf "%03d" "$(awk '{ print $1 }' <<< "$row")")"
+	layer="$(printf "%03d" "$(awk '{ print $2 }' <<< "$row")")"
+
+	magick "$base-$page-$layerLookbehind.png" "$base-$page-$layer.png" -compose CopyOpacity -composite "$base-$page-$layerLookbehind.png"
+	rm "$base-$page-$layer.png"
+done
+
+touch -r "$1" "$base-"*.png
