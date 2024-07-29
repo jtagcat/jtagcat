@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+if [[ ! -d "$1" ]]; then
+    echo "ERROR: Expected first argument to be a directory"
+    echo "USAGE: $0 <output directory> [name]"
+fi
+
+input="$(mktemp)"
+wl-paste > "$input"
+
+if [[ -n "$2" ]]; then
+    name="$2"
+else
+    name="$(grep "font-family:" "$input" | head -n1 | cut -d'"' -f 2)"
+fi
+
+format="$(grep "src: url('data:application/octet-stream;base64" "$input" | head -n1 | awk -F'format' '{print $2}' | cut -d"'" -f2)"
+
+grep "src: url('data:application/octet-stream;base64" "$input" | head -n1 | awk -F'base64,' '{print $2}' | cut -d"'" -f1 | base64 -d > "$1/$name.$format"
+
+rm "$input"
+
+case "$format" in
+    woff2) woff2_decompress "$1/$name.$format"; echo "$1/$name.ttf" ;;
+    *) echo "ERROR: unknown format '$format'"; exit 1 ;;
+esac
