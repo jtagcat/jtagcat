@@ -1,6 +1,15 @@
 #!/bin/bash
 set -eu
 
+# Normal mode:
+# Print: Clear clip
+# Shift: Screenshot region to clip
+# Alt: Screenshot to clip
+#
+# Present mode (Start with Ctrl):
+# Print: freeze display (bar will blink green)
+# Shift: set screen (not workspace) region
+
 presentpipe="$XDG_RUNTIME_DIR/pipectl.""$(id -u)"".wl-present.pipe"
 
 freezestate="$XDG_RUNTIME_DIR/wl-present-isfrozen"
@@ -9,7 +18,7 @@ case "$1" in
 		if [[ ! -p "$presentpipe" ]]; then
 			histNo="$(cliphist list | head -n1 | cut -f1)"
 			if [[ ! -e "$XDG_RUNTIME_DIR/cliplast" || "$(cat "$XDG_RUNTIME_DIR/cliplast" 2>&1 || echo 0)" != "$histNo" ]]; then
-			wl-copy --clear
+				wl-copy --clear
 				cliphist delete <<< "$histNo"
 				cliphist list | head -n1 | cut -f1 > "$XDG_RUNTIME_DIR/cliplast"
 			fi
