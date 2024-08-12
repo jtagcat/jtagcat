@@ -36,10 +36,15 @@ out=""
 		fi
 	fi
 
+	btbat=""
 	status="$(bluetoothctl show | grep Powered | sed 's/[[:space:]]*Powered: //g')"
 	if [[ "$status" == "yes" ]]; then
 		if bluetoothctl devices Connected | grep -q Device; then
 			out+="🔹"
+
+			if [[ "$(bluetoothctl info | grep 'Battery Percentage' | cut -d'(' -f2 | cut -d')' -f1)" -le 50 ]]; then
+				btbat="🪫"
+			fi
 		else
 			out+="🫧"
 		fi
@@ -49,6 +54,9 @@ out=""
 	dev="$(wpctl inspect @DEFAULT_AUDIO_SINK@ | grep ' node.description =' | cut -d\" -f2)"
 	case "$dev" in
 		"Built-in Audio Analog Stereo"|"Family 17h/19h HD Audio Controller Speaker + Headphones")
+			;;
+		"Built-in Audio Digital Stereo (HDMI)")
+			outcache+="HDMI"
 			;;
 		"ThinkPad Dock USB Audio Analog Stereo"|"ThinkPad USB-C Dock Gen2 USB Audio Analog Stereo")
 			outcache+="Dock"
@@ -79,7 +87,7 @@ out=""
 		fi
 	fi
 	if [[ "$outcache" != "" ]]; then
-		out+="$outcache "
+		out+="${outcache}${btbat} "
 	fi
 
 	out+="	"
@@ -98,11 +106,20 @@ out=""
 			;;
 	esac
 	
-
-	if [[ "$(cat /sys/class/power_supply/AC/online)" == 1 ]]; then
-		out+='🔌'
+	if [[ -d /sys/class/power_supply/AC ]]; then
+		if [[ "$(cat /sys/class/power_supply/AC/online)" == 1 ]]; then
+			out+='🔌'
+		fi
+		out+="$(cat /sys/class/power_supply/BAT0/capacity)%"
 	fi
-	out+="$(cat /sys/class/power_supply/BAT0/capacity)%"
+
+	if [[ -d /sys/class/power_supply/hidpp_battery_0 ]]; then
+		case "$(cat /sys/class/power_supply/hidpp_battery_0/capacity_level)" in
+			Critical|Low)
+				out+=" 🖰🪫"
+				;;
+		esac
+	fi
 	
 	if [[ "$(nmcli radio wifi)" != "enabled" ]]; then
 		out+=" ⚓️"

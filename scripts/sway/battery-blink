@@ -51,6 +51,18 @@ while true; do
 		sleep "$delay"
 	done
 
+	if [[ "$(bluetoothctl info | grep 'Battery Percentage' | cut -d'(' -f2 | cut -d')' -f1 || echo 100)" -le 20 ]]; then
+		warn_bg="$5" warn_fg="$6"
+		swaymsg bar "$1" colors background 0064c2
+                swaymsg bar "$1" colors statusline "$warn_fg"
+		sleep "0.2"
+		swaymsg bar "$1" colors background "$warn_bg"
+                swaymsg bar "$1" colors statusline "$warn_fg"
+		sleep "0.6"
+		default
+	fi
+
+
 #	if [[ "$(cat "$XDG_RUNTIME_DIR/poll-timetagger")" == "" ]]; then
 #		swaymsg bar "$1" colors background 0f3d57
 #		swaymsg bar "$1" colors statusline ffffff
