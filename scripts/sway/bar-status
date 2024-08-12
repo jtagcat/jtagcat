@@ -120,12 +120,27 @@ out=""
 				;;
 		esac
 	fi
-	
-	if [[ "$(nmcli radio wifi)" != "enabled" ]]; then
-		out+=" ⚓️"
-	elif [[ "$(nmcli -f type connection show --active | awk '$1 == "wifi"')" == "" ]]; then
-		out+=" 🌊"
-	fi
+
+
+	eth="$(nmcli device | awk '$2 == "ethernet" { print $3 == "connected" }' | tr '\n' '+' | sed 's/+$/\n/' | bc)"
+	wifi="$(nmcli device | awk '$2 == "wifi" { print $3 == "connected" }' | tr '\n' '+' | sed 's/+$/\n/' | bc)"
+	wifinot="$(nmcli device | awk '$2 == "wifi" { print $3 == "disconnected" }' | tr '\n' '+' | sed 's/+$/\n/' | bc)"
+
+	case "$(nmcli networking connectivity)" in
+		full)
+			if [[ "$eth" -gt 0  && "$wifi" -gt 0 ]]; then
+				out+=" ⚓️🛜"
+			fi
+			;;
+
+		limited|none)
+			[[ "$wifinot" -gt 0 ]] && out+=" 🌊" || out+=" ⚓️"
+			;;&
+		limited)
+			out+="◠⏚"
+			;;
+	esac
+
 
 	out+=" $(date +'%Y-%m-%d %H:%M:%S')"
 
