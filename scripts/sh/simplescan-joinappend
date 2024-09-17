@@ -1,22 +1,28 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-if [[ "$#" -eq 2 ]]; then
+if [[ "$#" -ne 1 ]]; then
 	echo "ERROR: expected exactly 1 arg"
 	echo "USAGE: $0 <input directory>"
 	exit 1
 fi
 
-for i in "$1"/*-1.png; do
-	base="$(revcut -d- -f2- <<< "$i")"
+for ext in png webp; do
+if compgen -G "$1/*-1.$ext" > /dev/null; then
 
-	if [[ -f "$base".png ]]; then
-		echo "ERROR: not overwriting $base.png"
-		continue
-	fi
+	for i in "$1"/*-1."$ext"; do
+		base="$(revcut -d- -f2- <<< "$i")"
 
-	magick "$base"-*.png -append "$base".png
+		if [[ -f "$base"."$ext" ]]; then
+			echo "ERROR: not overwriting $base."$ext""
+			continue
+		fi
 
-	touch -r "$i" "$base".png
-	rm "$base"-*.png
+		magick "$base"-*."$ext" -append "$base"."$ext"
+
+		touch -r "$i" "$base"."$ext"
+		rm "$base"-*."$ext"
+	done
+
+fi
 done
