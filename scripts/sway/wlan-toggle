@@ -1,0 +1,15 @@
+#!/bin/bash
+set -euo pipefail
+
+case "$(nmcli radio wifi)" in
+	enabled)
+		nmcli radio wifi off
+		;;
+	disabled)
+		nmcli radio wifi on
+		;;
+	*)
+		echo 'ERROR: unknown output from nmcli'
+		exit 1
+		;;
+esac
