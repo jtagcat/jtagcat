@@ -142,7 +142,8 @@ out=""
 	esac
 
 
-	out+=" $(date +'%Y-%m-%d %H:%M:%S')"
+	out+=" $(date +'%a:%Y-%m-%d %H:%M:%S')"
+#	out+=" 🛰$(TZ=Asia/Seoul date +'%H:%M:%S')"
 
 echo "$out"
 sleep "$1"
