@@ -15,7 +15,7 @@ for input in "$INPUTS/"*; do if [ -s "$input" ]; then # has something in it
 
 	yt-dlp --config-locations "$(dirname "$0")/common.conf" \
 		--batch-file="$input" \
-		--write-info-json --write-description --write-thumbnail --write-subs --write-comments \
+		--write-info-json --write-thumbnail --write-subs --write-comments \
         --paths home:"$DLBASE/$category" --paths temp:"$DLBASE/$category/_temp" \
 		--download-archive="$categorypath/_indexes/download_archive.txt" \
 		--print-to-file 'after_video:%(webpage_url)s' "$DLBASE/$category/_indexes/after_download.txt"

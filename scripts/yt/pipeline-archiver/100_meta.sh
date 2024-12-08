@@ -30,7 +30,7 @@ for file in "$INPUTS/"*; do if [ -s "$file" ]; then # has something in it
 	mkdir -p "$INPUTS""/../tmp"
 	yt-dlp --config-locations "$(dirname "$0")/common.conf" \
 		--batch-file="$INPUTS/$(basename "$file")" --skip-download \
-		--write-info-json --write-description --write-thumbnail \
+		--write-info-json --write-thumbnail \
 		--force-write-archive --download-archive="$DLBASE/$category/_indexes/meta_staging.txt" \
 		--print-to-file 'after_video:%(webpage_url)s' "$DLBASE/$category/_indexes/known_urls_staging.txt" \
 		--paths home:"$DLBASE/$category" --paths temp:"$DLBASE/$category/_temp"
