@@ -489,3 +489,36 @@ jq -r '"\(.a) \(.b.c)!"'
 ```plain
 hello world!
 ```
+
+### Construct new filename, where present in array (similar to ?-syntax) by referencing top-level / root / parent key-value within an array
+
+#### Input
+```json
+{
+  "id": 25,
+  "messages": [
+    {
+      "id": 2,
+      "photo": "foo.txt"
+    },
+    {
+      "id": 5
+    },
+    {
+      "id": 6,
+      "photo": "bar.txt"
+    }
+  ]
+}
+```
+
+#### Command
+```sh
+jq -r '.id as $chatid | .messages[] | if (.photo | not) then empty else ([$chatid,.photo] | @sh) end'
+```
+
+#### Output
+```sh
+25 'foo.txt'
+25 'bar.txt'
+```
