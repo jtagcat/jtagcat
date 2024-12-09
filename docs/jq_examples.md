@@ -20,26 +20,28 @@
 
 #### Command
 ```sh
-jq '.[] + {"sourceId": 5}'
+jq '.[] += {"sourceId": 5}'
 ```
 
 #### Output
 ```json
-{
-  "endTime": "2021-03-19 00:13",
-  "msPlayed": 91274,
-  "sourceId": 5
-}
-{
-  "endTime": "2021-03-19 00:14",
-  "msPlayed": 37797,
-  "sourceId": 5
-}
-{
-  "endTime": "2021-03-19 00:15",
-  "msPlayed": 0,
-  "sourceId": 5
-}
+[
+  {
+    "endTime": "2021-03-19 00:13",
+    "msPlayed": 91274,
+    "sourceId": 5
+  },
+  {
+    "endTime": "2021-03-19 00:14",
+    "msPlayed": 37797,
+    "sourceId": 5
+  },
+  {
+    "endTime": "2021-03-19 00:15",
+    "msPlayed": 0,
+    "sourceId": 5
+  }
+]
 ```
 
 ### Construct an object with new key names and processing
@@ -68,7 +70,6 @@ jq '.[] + {"sourceId": 5}'
 jq '{"listen_type": "import", "payload": (.[] |= {"listened_at": (.endTime | split (" ") | .[0] + "T" + .[1] + ":00Z" | fromdateiso8601),'\
 '"track_metadata": {"additional_info":{"listening_from":"spotify"}, "artist_name": .artistName, "track_name": .trackName } })}'
 ```
-
 
 #### Output
 ```json
