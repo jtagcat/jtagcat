@@ -44,6 +44,52 @@ jq '.[] += {"sourceId": 5}'
 ]
 ```
 
+### Add a dynamic key-value to all objects in an array.
+
+#### Input
+```json
+[
+  {
+    "endTime": "2021-03-19 00:13",
+    "msPlayed": 91274
+  },
+  {
+    "endTime": "2021-03-19 00:14",
+    "msPlayed": 37797
+  },
+  {
+    "endTime": "2021-03-19 00:15",
+    "msPlayed": 0
+  }
+]
+```
+
+#### Command
+```sh
+jq '.[] |= . + {"sourceId": (.msPlayed*2)}'
+```
+
+#### Output
+```json
+[
+  {
+    "endTime": "2021-03-19 00:13",
+    "msPlayed": 91274,
+    "sourceId": 182548
+  },
+  {
+    "endTime": "2021-03-19 00:14",
+    "msPlayed": 37797,
+    "sourceId": 75594
+  },
+  {
+    "endTime": "2021-03-19 00:15",
+    "msPlayed": 0,
+    "sourceId": 0
+  }
+]
+```
+
 ### Construct an object with new key names and processing
 [spotifytakeout_listenbrainz_streaminghistory.sh](../scripts/music/spotifytakeout_listenbrainz_streaminghistory.sh)
 
