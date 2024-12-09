@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -eou pipefail
+
+if ! mv -v -n "$1" "$2" | grep -q .; then
+    if ! diff "$1" "$2" >/dev/null; then
+        echo ERROR: Source and target differ
+        exit 1
+    fi
+
+    rm "$1" # Target identical, removing source
+fi
