@@ -194,7 +194,7 @@ jq '[.[] | {"addr": .address."@addr", "hostnames": [.hostnames.hostname[]."@name
 ```
 #### Command
 ```sh
-jq -r '.[] | (.id +"¤"+ (del(.id)|@base64) )"' |\
+jq -r '.[] | (.id +"¤"+ (del(.id)|@base64) )' |\
 while IFS=¤ read -r filename content; do
   base64 -d <<< "$content" | sed '$a\' > "$filename" # sed: end file with \n
 done
