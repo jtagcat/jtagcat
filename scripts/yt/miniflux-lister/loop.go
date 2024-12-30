@@ -92,7 +92,7 @@ func processFeeds(c *miniflux.Client, feeds miniflux.Feeds) (ytFeeds []feedPlus)
 			}
 
 			f.Title = f.Title[:len(f.Title)-1] // rm "]"
-			cleanTitle, tagStr, _ := std.RevCut(f.Title, " [")
+			cleanTitle, tagStr, _ := std.RevCutv2(f.Title, " [")
 			f.Title = cleanTitle
 
 			tags := make(map[string]bool)
