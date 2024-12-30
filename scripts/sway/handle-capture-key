@@ -49,7 +49,17 @@ case "$1" in
 	ctrl)
 		if [[ ! -p "$presentpipe" ]]; then
 			echo 0 > "$freezestate"
-			"$(dirname "$0")"/wl-present mirror
+
+			notify-send 'Select destination'
+			slurp -p -b '#7fb06d88' >/dev/null || exit 1
+			projid="$(swaymsg -t get_workspaces | jq '.[] | select(.focused == true) | .name')"
+
+			notify-send 'Select source'
+			"$(dirname "$0")"/wl-present mirror && \
+				swaymsg -t '[app_id="at.yrlf.wl_mirror"]' move container to workspace "$projid"
+
+		else
+			killall wl-mirror
 		fi
 		;;
 	*)
