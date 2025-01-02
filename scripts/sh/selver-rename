@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -eou pipefail
+
+for f in "$@"; do
+	txno="$(tail -n1 < "$f" | cut -d";" -f1)"
+
+	eedate="$(tail -n1 < "$f" | cut -d";" -f2)"
+        isodate="$(busybox date -D "%d.%m.%Y" -d "$eedate" +"%Y-%m-%d")"
+
+	newname="$isodate selver $txno.csv"
+	if [[ "$f" != "$newname" ]]; then
+		 mv "$f" "$newname"
+	fi
+
+	echo "; arve:'$newname'"
+done
