@@ -1,0 +1,74 @@
+#!/bin/bash
+set -euo pipefail
+
+export root="${1%/}" # rm trailing slash
+if [[ ! -d "$root" ]]; then
+	echo "ERROR: expected exactly one argument, single takeout dir"
+	echo "INFO: $0 consumes a Telegram archive: splits-strips additional info; splits chats, copies over each chat's referenced media. Leaves unreferenced media files untouched." #TODO: Check if we match all possible media in json spec (if there is one)
+	exit 1
+fi
+
+# to be run where PWD is (a single) export dir
+
+## results split
+
+jq -r '.personal_information.bio' "$root"/result.json > "$root"/bio.txt
+jq '.other_data | {"created":.created_stickers,"installed":.installed_stickers}' "$root"/result.json > "$root"/stickers.json
+
+mkdir "$root"/results
+jq -r '.chats.list[] | ( (.id|tostring) +"¤"+ (.|@base64) )' "$root"/result.json |\
+	while IFS=¤ read -r id content; do
+	mkdir "$root"/results/"$id"
+	# shellcheck disable=SC1003
+	base64 -d <<< "$content" | sed '$a\' > "$root"/results/"$id"/chat.json
+done
+
+## media copy
+
+export touched="$(mktemp)"
+function cleanup {
+	rm "$touched"
+}
+trap cleanup EXIT
+
+# Same renaming logic is applied in reference renaming.
+# Older takeouts don't have file_name for files, as such, the data is lost! Accepting the loss in favour of the increased complexity to code and (further) file deduplication
+function filehook {
+	# $1: chatId_messageId
+	# $2: current filename
+	# $3: suggested filename (if present)
+
+	name=""
+	if [[ "$3" == "null" ]]; then
+		currentbase="$(basename "$2")"
+		if [[ "$currentbase" == *.* ]]; then # has extension
+			name="$1.${2##*.}" # (last) file extension from current filename: .tar.gz will change to .gz
+		else
+			name="$1"
+		fi
+	else
+		name="$1_$3"
+	fi
+
+	if cp "$root"/"$2" "$chatdir"/files/"$name"; then
+		echo "$root"/"$2" >> "$touched"
+	fi # cp already prints failure message
+}
+export -f filehook
+
+for chat in "$root"/results/*/chat.json; do
+	export chatdir="$(dirname "$chat")"
+	mkdir "$chatdir"/files
+
+	for kind in photo file contact_vcard; do
+		jq -r '.id as $cid | .messages[] | if .'"$kind"' then ([($cid|tostring)+"_"+(.id|tostring),.'"$kind"',.file_name?] | @sh) else empty end' "$chat" | parallel filehook {=uq=} "$chatdir"
+
+		# rename reference to follow filehook
+		inplace="$(mktemp)" && jq 'del(.messages[].thumbnail) | .id as $cid | .messages[] |= if .'"$kind"' then . + {"'"$kind"'": (($cid|tostring)+"_"+(.id|tostring)+(if .file_name then "_"+.file_name else "."+(.'"$kind"' |split("/") |last |split(".") |last) end)) } else . end' "$chat" > "$inplace" && mv "$inplace" "$chat"
+	done
+done
+
+## media delete from source
+jq -r '.chats.list[].messages[] | select(.thumbnail != null) | .thumbnail' "$root"/result.json | sort | uniq | parallel rm -f "$root"/{}
+sort < "$touched" | uniq | parallel rm -f {} # parallel as the item count may exceed argument limit
+find "$root"/chats -type d -empty -delete
