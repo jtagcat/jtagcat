@@ -12,5 +12,5 @@ for f in "$@"; do
 		 mv "$f" "$newname"
 	fi
 
-	echo "; arve:'$newname'"
+	echo "    ; arve:'$newname'"
 done
