@@ -42,7 +42,8 @@ out=""
 		if bluetoothctl devices Connected | grep -q Device; then
 			out+="🔹"
 
-			if [[ "$(bluetoothctl info | grep 'Battery Percentage' | cut -d'(' -f2 | cut -d')' -f1)" -le 50 ]]; then
+			btper="$(bluetoothctl info | grep 'Battery Percentage' || true)"
+			if [[ "$btper" != "" && "$(cut -d'(' -f2 <<< "$btper" | cut -d')' -f1)" -le 50 ]]; then
 				btbat="🪫"
 			fi
 		else
