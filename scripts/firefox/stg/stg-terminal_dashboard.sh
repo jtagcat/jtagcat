@@ -19,7 +19,7 @@ stgepoch="$(date -ud "$(cut -d- -f 5-7 <<< "$file" | cut -d@ -f1)" "+%s")"
 epochdiff="$(echo "$(date "+%s")"-"$stgepoch" | bc)"
 
 # header, nonarchived/total tabs, last backup relative time
-echo "STG" "$(jq '.groups[] | select(.isArchive == false) | .tabs[].url' "$file" | wc -l)"/"$(jq '.groups[].tabs[].url' "$file" | wc -l)" -"$(date -d@"$epochdiff" -u +%H:%M:%S)" @"$(date -u +%H:%M:%S)"
+echo "STG" "$(jq '.groups[] | select(.isArchive == false) | .tabs[].url' "$file" | wc -l)"/"$(jq '.groups[].tabs[].url' "$file" | wc -l)" -"$(date -d@"$epochdiff" -u +%H:%M:%S)" @"$(date -u +%H:%M:%S) ccc:$(jq -r ".groups[].tabs[].url" "$file" | grep -F "https://media.ccc.de" | wc -l) yt:$(jq -r ".groups[].tabs[].url" "$file" | grep -F "https://www.youtube.com" | wc -l)"
 jq -r ".groups[].tabs[].url" "$file" | sort | grep -vFx "about:newtab" | grep -vFx "about:blank" | uniq -d | sort # duped tabs
 jq -r ".groups[].tabs[].url" "$file" | grep -Fx "about:blank" | uniq -c # blank tabs (tab rot!!)
 
