@@ -146,7 +146,7 @@ jq '{"listen_type": "import", "payload": (.[] |= {"listened_at": (.endTime | spl
 }
 ```
 
-### Construct an object from array, alternative
+### Construct an object from array (rewrite/reconstruct object), alternative
 #### Input
 ```json
 [
