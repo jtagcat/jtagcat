@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -eou pipefail
 
+#TODO: if src is file and dst is dir, append filename
+#TODO: if src is dir
+
 if ! mv -v -n "$1" "$2" | grep -q .; then
     if ! diff "$1" "$2" >/dev/null; then
         echo ERROR: Source and target differ
