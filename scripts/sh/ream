@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -eou pipefail
+
+dir="$PWD"
+case "$#" in
+	0)
+		true
+		;;
+	1)
+		dir="$1"
+		;;
+	*)
+		echo "ERR: expected 0 or a single argument"
+		echo "USAGE: $0 [directory]"
+esac
+
+find "$dir" -maxdepth 1 -name '*.reapindex' -delete -or -name '*.reapeaks' -delete
