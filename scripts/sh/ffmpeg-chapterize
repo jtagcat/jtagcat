@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+chapters="$1"
+in="$2"
+if [[ "$#" -lt 2 ]]; then
+	echo 'ERROR: expected at least 2 arguments'
+	echo "USAGE: $0 <chapters.txt> <input video> [output video]"
+	exit 1
+fi
+
+to_seconds() {
+  IFS=: read h m s <<< "$1"
+  echo "$(( 10#$h * 3600 + 10#$m * 60 + 10#$s ))"
+}
+
+export convertedTimestamps="$(mktemp)"
+function cleanup {
+        rm "$convertedTimestamps"
+}
+trap cleanup EXIT
+
+echo ";FFMETADATA1" > "$convertedTimestamps"
+
+cat "$1" | while IFS= read -r line; do
+	rawTimestamp="$(cut -d' ' -f 1 <<< "$line")"
+	rawDescription="$(cut -d' ' -f 2- <<< "$line")"
+
+	timestamp="$(to_seconds "$rawTimestamp")"
+	description="${rawDescription#- }"
+
+	printf """
+[CHAPTER]
+TIMEBASE=1/1
+START=$timestamp
+END=$(echo "$timestamp" + 1 | bc)
+; ^ docs says is omittable, but in reality is not. Not going to bother with lookahead now.
+title=$description
+"""
+
+done >> "$convertedTimestamps"
+
+out="$3"
+if [[ -z "$3" ]]; then
+        out="$(exteat <<< "$2")_timestamped.$(extget <<< "$2")"
+fi
+
+ffmpeg -hide_banner -loglevel warning -i "$2" -i "$convertedTimestamps" -map_chapters 1 -c copy "$out"
