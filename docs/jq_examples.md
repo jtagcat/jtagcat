@@ -522,3 +522,37 @@ jq -r '.id as $chatid | .messages[] | if (.photo | not) then empty else ([$chati
 25 'foo.txt'
 25 'bar.txt'
 ```
+
+### Keep array constructed while filtering / select()
+#### Input
+```json
+[
+        {
+                "pick": "ye",
+                "out": "njom"
+        },
+        {
+                "pick": "ye",
+                "out": "njam"
+        },
+        {
+                "pick": "nay",
+                "out": "jom"
+        }
+]
+```
+#### Instead of
+```sh
+jq -r '[ .[] | select(.pick == "ye") | .out ]'
+```
+#### Command
+```sh
+jq -r 'map(select(.pick == "ye") | .out)'
+```
+#### Output
+```plain
+[
+  "njom",
+  "njam"
+]
+```
