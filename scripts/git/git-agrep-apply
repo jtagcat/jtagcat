@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -eou pipefail
+
+# grepdiff is from patchutils
+
+git diff -U0 | grepdiff "$*" --output-matching=hunk | git apply --cached --unidiff-zero

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -eou pipefail
+
+# grepdiff is from patchutils
+
+git diff -U0 | grepdiff "$*" --output-matching=hunk | less -r
+
+echo
+echo "$(tput setaf 3)Add patch:$(tput sgr0) git agrep-apply"
