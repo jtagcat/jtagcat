@@ -4,6 +4,8 @@ github.com/google/renameio/v2 v2.0.0 h1:UifI23ZTGY8Tt29JbYFiuyIU3eX+RNFtUwefq9qA
 github.com/google/renameio/v2 v2.0.0/go.mod h1:BtmJXm5YlszgC+TD4HOEEUFgkJP3nLxehU6hfe7jRt4=
 github.com/jtagcat/util v0.0.0-20231003182058-b65883df8ac7 h1:Olc6Ug1eaSsw8JL4vwQw0o5DCd0tR2oTzv95oVRACVY=
 github.com/jtagcat/util v0.0.0-20231003182058-b65883df8ac7/go.mod h1:noAvSnMLWermezOUC8eXdcz5/UPkKayCov7T+7uCd70=
+github.com/jtagcat/util v0.0.0-20250418155756-40b3487af1f7 h1:vB2MTjlddYL+oN5aTUx4dWFde7qPnXkWBVXLXLLSE/A=
+github.com/jtagcat/util v0.0.0-20250418155756-40b3487af1f7/go.mod h1:Q7IZptbxT1gshgtntUmWYt+dJsBpQHIBHJBQs8Nk9do=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/testify v1.8.1 h1:w7B6lhMri9wdJUVmEZPGGhZzrYTPvgJArz7wNPgYKsk=
