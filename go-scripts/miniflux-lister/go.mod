@@ -8,7 +8,7 @@ require (
 	github.com/google/renameio/v2 v2.0.0
 	github.com/jtagcat/util v0.0.0-20250418155756-40b3487af1f7
 	k8s.io/apimachinery v0.32.3
-	miniflux.app v1.0.46
+	miniflux.app/v2 v2.2.7
 )
 
 require (

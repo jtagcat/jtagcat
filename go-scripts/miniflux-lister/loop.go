@@ -10,14 +10,14 @@ import (
 
 	"github.com/google/renameio/v2"
 	"github.com/jtagcat/util/std"
-	miniflux "miniflux.app/client"
+	miniflux "miniflux.app/v2/client"
 )
 
 func client() *miniflux.Client {
 	endpoint, token := os.Getenv(ENVPREFIX+"MINIFLUX_ENDPOINT"), os.Getenv(ENVPREFIX+"MINIFLUX_TOKEN")
 	endpoint = strings.TrimSuffix(strings.TrimSuffix(endpoint, "/"), "/v1") // https://github.com/miniflux/v2/pull/1582
 
-	c := miniflux.New(endpoint, token)
+	c := miniflux.NewClient(endpoint, token)
 
 	me, err := c.Me()
 	if err != nil {
