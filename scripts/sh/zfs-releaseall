@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+set -eou pipefail
+
+dataset="$1"
+
+if [[ "$#" != 1 ]]; then
+    echo "ERR: expected exactly 1 argument"
+    echo "USAGE: $0 <dataset>"
+    exit 1
+fi
+
+zfs holds -H "$dataset" | cut -f 2 | while IFS= read -r hold; do
+	echo releasing "$hold"
+	sudo zfs release "$hold" "$dataset"
+done
