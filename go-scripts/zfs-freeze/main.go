@@ -71,7 +71,7 @@ func main() {
 }
 
 func Freeze(ctx context.Context, targetDataset, freezeName string) error {
-	targetParent, targetName, ok := std.RevCut(targetDataset, "/")
+	targetParent, targetName, ok := std.RevCutv2(targetDataset, "/")
 	if !ok {
 		targetName = targetParent // dataset is top level
 	}
@@ -104,7 +104,6 @@ func Freeze(ctx context.Context, targetDataset, freezeName string) error {
 			"zfs", "clone", "--",
 			snap, snapDestination,
 		), true)
-
 		if err != nil {
 			return std.SlogWrap(slog.LevelError, "cloning snapshot", slog.String("snapshot", snap), slog.String("destination", snapDestination), std.SlogNamedErr("zfs clone", err), slog.String("freeze", freezeRoot))
 		}
