@@ -39,7 +39,7 @@ out=""
 	btbat=""
 	status="$(bluetoothctl show | grep Powered | sed 's/[[:space:]]*Powered: //g')"
 	if [[ "$status" == "yes" ]]; then
-		if bluetoothctl devices Connected | grep -q Device; then
+		if (bluetoothctl devices Connected ||:) | grep -q Device; then
 			out+="🔹"
 
 			btper="$(bluetoothctl info | grep 'Battery Percentage' || true)"
@@ -69,7 +69,7 @@ out=""
 			outcache="!! BT"
 			;;
 		"WI-C100")
-			bluetoothctl devices Connected | grep -q 'blu WI-C100' && \
+			(bluetoothctl devices Connected ||:) | grep -q 'blu WI-C100' && \
 				outcache+="blu "
 
 			outcache+="WI-C100"
