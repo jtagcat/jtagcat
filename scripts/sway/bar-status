@@ -146,6 +146,10 @@ out=""
 	out+=" $(date +'%a:%Y-%m-%d %H:%M:%S')"
 #	out+=" 🛰$(TZ=Asia/Seoul date +'%H:%M:%S')"
 
+	if [[ -f "$XDG_RUNTIME_DIR/cafinhibit" ]]; then
+		out+=" 🟩"
+	fi
+
 echo "$out"
 sleep "$1"
 done

@@ -5,13 +5,14 @@ set -eu
 # Print: Clear clip
 # Shift: Screenshot region to clip
 # Alt: Screenshot to clip
+# Ctrl: Start Present mode
+# Ctrl+Alt: Inhibit lock/sleep
 #
 # Present mode (Start with Ctrl):
 # Print: freeze display (bar will blink green)
 # Shift: set screen (not workspace) region
 
 presentpipe="$XDG_RUNTIME_DIR/pipectl.""$(id -u)"".wl-present.pipe"
-
 freezestate="$XDG_RUNTIME_DIR/wl-present-isfrozen"
 case "$1" in
 	normal)
@@ -60,6 +61,15 @@ case "$1" in
 
 		else
 			killall wl-mirror
+		fi
+		;;
+        ctrlalt)
+                if [[ -f "$XDG_RUNTIME_DIR/cafinhibit" ]]; then
+			kill "$(cat "$XDG_RUNTIME_DIR/cafinhibit")"
+			notify-send -t 2000 Inhibitor stopped
+		else
+			caffeinated -p "$XDG_RUNTIME_DIR/cafinhibit" -d
+			notify-send -t 2000 Inhibitor started
 		fi
 		;;
 	*)
