@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-set -eou pipefail
-
-git push --force-with-lease
-
