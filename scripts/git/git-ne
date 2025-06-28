@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 set -eou pipefail
 
-git commit --amend --no-edit
+git commit --amend --no-edit "$@"
