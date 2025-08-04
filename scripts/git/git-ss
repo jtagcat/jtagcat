@@ -13,3 +13,9 @@ fi
 
 git stripspace < "$1" > "$1.git-ss.tmp"
 mv "$1.git-ss.tmp" "$1"
+
+read -p "git add "$1"? [Yn] " yn
+answer="${yn:-y}"  # Default to 'y' if no input is provided
+if [[ "$yn" == [Yy] ]]; then
+	git add "$1"
+fi
