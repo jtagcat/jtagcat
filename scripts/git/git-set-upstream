@@ -1,0 +1,54 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+function usage {
+	echo "USAGE: $0 <origin URL> [origin branch] [local branch] [origin name]"
+	exit 1
+}
+
+if [[ "$#" != 1 ]]; then
+	echo "ERR: expected at leat 1 argument"
+	usage
+fi
+
+originURL="$1"
+originBranch="$2"
+localBranch="$3"
+originName="$4"
+
+if [[ -z "$originName" ]]; then
+	originName="upstream"
+fi
+
+if ! git remote add "$originName" "$originURL" 2>/dev/null; then
+	oldURL="$(git remote get-url "$originName")"
+	if [[ "$originURL" != "$oldURL" ]]; then
+		echo Replacing "$originName" URL: "$oldurl" → "$originURL"
+		git remote set-url "$originName" "$originURL"
+	fi
+fi
+
+git fetch "$originName"
+
+originBranch="$2"
+if [[ -z "$originBranch" ]]; then
+	git branch -r --list "$originName/*"
+
+	if git ls-remote --quiet --exit-code "$originName" main >/dev/null; then
+		originBranch=main
+	elif git ls-remote --quiet --exit-code "$originName" master >/dev/null; then
+		originBranch=master
+	else
+		echo "ERR: upstream does not have a main or master branch"
+		usage
+	fi
+fi
+
+if [[ -z "$localBranch" ]]; then
+	localBranch="$originBranch"
+fi
+
+git branch --quiet --set-upstream-to="$originName/$originBranch" "$localBranch"
+echo "branch '$localBranch' set up to track '$originName/$originBranch'"
+
+git pull "$originName" "$originBranch"
