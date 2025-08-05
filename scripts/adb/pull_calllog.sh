@@ -9,3 +9,4 @@ fi
 
 mkdir -p "$1"
 adb shell content query --uri content://call_log/calls > "$1/$(date -uI)"
+# format: vnd.android.cursor.dir/calls
