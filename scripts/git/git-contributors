@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -eou pipefail
+
+git shortlog --summary --numbered --email "$@"
