@@ -60,6 +60,7 @@ while true; do
                 swaymsg bar "$1" colors statusline "$warn_fg"
 		sleep "0.6"
 		default
+		sleep 10
 	fi
 
 

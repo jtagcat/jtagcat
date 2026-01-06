@@ -6,7 +6,7 @@ set -eu
 # Shift: Screenshot region to clip
 # Alt: Screenshot to clip
 # Ctrl: Start Present mode
-# Ctrl+Alt: Inhibit lock/sleep
+# Super: Inhibit lock/sleep
 #
 # Present mode (Start with Ctrl):
 # Print: freeze display (bar will blink green)
@@ -63,7 +63,7 @@ case "$1" in
 			killall wl-mirror
 		fi
 		;;
-        ctrlalt)
+        super)
                 if [[ -f "$XDG_RUNTIME_DIR/cafinhibit" ]]; then
 			kill "$(cat "$XDG_RUNTIME_DIR/cafinhibit")"
 			notify-send -t 2000 Inhibitor stopped
