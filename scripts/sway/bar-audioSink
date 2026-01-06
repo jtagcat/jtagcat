@@ -1,0 +1,44 @@
+#!/bin/bash
+set -euo pipefail
+
+warn=0
+
+dev="$(wpctl inspect @DEFAULT_AUDIO_SINK@ | grep ' node.description =' | cut -d\" -f2)"
+case "$dev" in
+	"Built-in Audio Analog Stereo"|"Family 17h/19h HD Audio Controller Speaker + Headphones")
+		warn=1
+		dev=""
+		;;
+	"Built-in Audio Digital Stereo (HDMI)")
+		dev="HDMI"
+		;;
+	"ThinkPad Dock USB Audio Analog Stereo"|"ThinkPad USB-C Dock Gen2 USB Audio Analog Stereo")
+		dev="Dock"
+		;;
+	"Jabra SPEAK 410 Analog Stereo")
+		dev="Jabra"
+		;;
+	"(4D)Logitech Adapter")
+		warn=1
+		dev="BT"
+		;;
+	"WI-C100")
+		kind=""
+		(bluetoothctl devices Connected ||:) | grep -q 'blu WI-C100' && kind="blu "
+
+		dev="${kind}WI-C100"
+		;;
+	*)
+		;;
+esac
+
+if [[ "$("$(dirname "$0")/wpctl-status" @DEFAULT_AUDIO_SINK@)" == 0 ]]; then
+	printf "🔇"
+else
+	printf "🔉"
+	if [[ "$warn" == 1 ]]; then
+		printf "⚠️ "
+	fi
+fi
+
+echo "$dev"

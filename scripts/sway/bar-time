@@ -1,0 +1,4 @@
+#!/bin/bash
+set -euo pipefail
+
+date +'%a:%Y-%m-%d %H:%M:%S'

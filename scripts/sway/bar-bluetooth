@@ -1,0 +1,21 @@
+#!/bin/bash
+set -euo pipefail
+
+out=""
+btbat=""
+
+status="$(bluetoothctl show | grep Powered | sed 's/[[:space:]]*Powered: //g')"
+if [[ "$status" == "yes" ]]; then
+	if (bluetoothctl devices Connected ||:) | grep -q Device; then
+		out+="🔹"
+
+		btper="$(bluetoothctl info | grep 'Battery Percentage' || true)"
+		if [[ "$btper" != "" && "$(cut -d'(' -f2 <<< "$btper" | cut -d')' -f1)" -le 50 ]]; then
+			btbat="🪫"
+		fi
+	else
+		out+="🫧"
+	fi
+fi
+# btbat was originally after audioSink
+echo "${out}${btbat}"

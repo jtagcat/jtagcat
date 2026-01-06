@@ -1,0 +1,34 @@
+#!/bin/bash
+set -euo pipefail
+
+dev="$(wpctl inspect @DEFAULT_AUDIO_SOURCE@ | grep ' node.description =' | cut -d\" -f2)"
+case "$dev" in
+	"Built-in Audio Analog Stereo"|"Family 17h/19h HD Audio Controller Digital Microphone")
+		dev=""
+		;;
+	"Webcam C310 Mono")
+		dev="C310"
+		;;
+	"ThinkPad Dock USB Audio Analog Stereo"|"ThinkPad USB-C Dock Gen2 USB Audio Mono")
+		dev="Dock"
+		;;
+	"Jabra SPEAK 410 Mono")
+		dev="Jabra"
+		;;
+	*)
+		;;
+esac
+
+if [[ "$dev" != "" ]]; then
+	printf "🎤"
+fi
+
+if [[ "$("$(dirname "$0")/wpctl-status" @DEFAULT_AUDIO_SOURCE@)" == 0 ]]; then
+	printf "❌"
+fi
+
+if [[ "$dev" != "" ]]; then
+	printf " "
+fi
+
+echo "$dev"
