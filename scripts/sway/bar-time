@@ -1,4 +1,13 @@
 #!/bin/bash
 set -euo pipefail
 
-date +'%a:%Y-%m-%d %H:%M:%S'
+# script will be replaced when waybar locales gets fixed
+
+while true; do
+	date +'%a:%Y-%m-%d %H:%M:%S'
+
+	# https://medo64.com/posts/sleep-until-the-next-full-second
+	SLEEP_SEC=`printf "0.%03d" $((1000 - 10#$(date +%N | head -c 3)))`
+	if [[ "$SLEEP_SEC" == "0.000" ]]; then SLEEP_SEC="1.000"; fi
+	sleep "$SLEEP_SEC"
+done
