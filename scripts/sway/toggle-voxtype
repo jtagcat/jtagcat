@@ -1,0 +1,10 @@
+#!/bin/bash
+set -euo pipefail
+
+if systemctl --user is-active --quiet voxtype; then
+    systemctl --user stop voxtype
+    notify-send --expire-time=1500 "Disabled"
+else
+    systemctl --user start voxtype
+    notify-send --expire-time=1500 "Enabled" "Push to type"
+fi

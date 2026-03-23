@@ -1,0 +1,11 @@
+#!/bin/bash
+set -euo pipefail
+
+notify-send "Synthesizing MIDI…" "$(basename "$1")" &
+
+dir="$XDG_RUNTIME_DIR/deadbeef-timidity"
+mkdir -p "$dir"
+wav="$dir/$(basename "$1" | rev | cut -d. -f 2- | rev).wav"
+timidity "$1" -Ow -o "$wav"
+
+deadbeef -- "$wav"
