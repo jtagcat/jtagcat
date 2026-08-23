@@ -2,7 +2,7 @@
 set -uo pipefail
 shopt -s nullglob
 
-DLBASE=/fryer/jtagcat/ia/yt/nonyt
+DLBASE=/fryer/jtagcat/ia/video
 INPUTS=/fryer/jtagcat/g/jc/jtagcat/scripts/yt/pipeline-archiver/inputs.nonyt
 
 for input in "$INPUTS/"*; do if [ -s "$input" ]; then # has something in it
