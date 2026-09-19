@@ -7,7 +7,7 @@ if [[ "$#" -ne 1 ]]; then
 	exit 1
 fi
 
-for ext in png webp; do
+for ext in png webp jpg; do
 if compgen -G "$1/*-1.$ext" > /dev/null; then
 
 	for i in "$1"/*-1."$ext"; do
