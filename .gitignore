@@ -6,3 +6,7 @@
 NOTICE_*
 # contains repo names in per-repo variables in the case variables
 /scripts/restic/restic-forget.sh
+# incomplete
+/scripts/sway/freezeshot
+/scripts/sway/waydroid-resizing
+/scripts/sh/exifix

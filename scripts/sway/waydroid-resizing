@@ -1,21 +1,30 @@
 #!/bin/bash
 set -euo pipefail
 
+function stop() {
+	waydroid session stop
+}
+trap stop SIGHUP
+
 waydroid session start &
 waydroid show-full-ui
 
-swaymsg -t subscribe -m '["window"]' | jq --unbuffered --compact-output |\
-while IFS= read -r event; do
-	if [[ "$(jq -r '.container.app_id' <<< "$event")" != "Waydroid" ]]; then
-		continue
-	fi
+# # sudo SWAYSOCK="$SWAYSOCK" -s << EOF
+	swaymsg -t subscribe -m '["window"]' | jq --unbuffered --compact-output |\
+	while IFS= read -r event; do
+		if [[ "$(jq -r '.container.app_id' <<< "$event")" != "Waydroid" ]]; then
+			continue
+		fi
 
-	if [[ "$(jq -r '.change' <<< "$event")" == "close" ]]; then
-		break
-	fi
+		if [[ "$(jq -r '.change' <<< "$event")" == "close" ]]; then
+			break
+		fi
 
-	waydroid prop set persist.waydroid.height "$(jq '.container.window_rect.height' <<< "$event")"
-	waydroid prop set persist.waydroid.width "$(jq '.container.window_rect.width' <<< "$event")"
-done
+# 		waydroid prop set persist.waydroid.height "$(jq '.container.window_rect.height' <<< "$event")"
+# 		waydroid prop set persist.waydroid.width "$(jq '.container.window_rect.width' <<< "$event")"
+
+# 		echo waydroid shell wm size "$(jq -r '.container.window_rect | "\(.width)x\(.height)"' <<< "$event")"
+	done
+# # EOF
 
 waydroid session stop
