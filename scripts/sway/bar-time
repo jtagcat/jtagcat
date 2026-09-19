@@ -4,7 +4,7 @@ set -euo pipefail
 # script will be replaced when waybar locales gets fixed
 
 while true; do
-	date +'%a:%Y-%m-%d %H:%M:%S'
+	date +'%a:%Y-%m-%d %H;%M:%S'
 
 	# https://medo64.com/posts/sleep-until-the-next-full-second
 	SLEEP_SEC=`printf "0.%03d" $((1000 - 10#$(date +%N | head -c 3)))`
