@@ -1,8 +1,63 @@
 #!/usr/bin/env bash
 set -ou pipefail
 
+full=0
+push=0
+while getopts "::fp" opt; do case "$opt" in
+	f)
+		if [[ -n "$(git status --porcelain)" ]]; then
+			echo "ERR: git tree is dirty:" >&2
+			git status --short >&2
+			exit 1
+		fi
+
+		full=1
+		;;
+	p) push=1 ;;
+	*)
+		echo "USAGE: $0 [options]"
+		echo "full, includes git commit and push"
+		exit 64
+		;;
+esac; done
+
 go get -u ./...
 if [ -d "vendor" ]; then
 	go mod vendor
 fi
 
+if [ -f "Dockerfile" ]; then
+	gover="$(grep '^go ' go.mod | cut -c4- | cut -d. -f 1-2)"
+
+	dockerver=""
+	while read -r versionstr; do
+		linever="$(cut -d' ' -f2 <<< "$versionstr" | cut -d: -f2)"
+
+		if [[ "$dockerver" == "" ]]; then
+			dockerver="$linever"
+			continue
+		fi
+
+		if [[ "$linever" != "$dockerver" ]]; then
+			echo "ERR: Multiple differnet golang versions in Dockerfile"
+			grep 'FROM golang:' Dockerfile
+			exit 1
+		fi
+	done < <(grep 'FROM golang:' Dockerfile) # otherwise dockerver is not set
+
+	if [[ "$dockerver" != "$gover" ]] && [[ "$dockerver" != "" ]]; then
+		sed -i "s/FROM golang:$dockerver/FROM golang:$gover/g" Dockerfile
+		echo "Dockerfile updated: FROM golang:$dockerver -> FROM golang:$gover"
+	fi
+fi
+
+if [[ "$full" == 1 ]]; then
+	git pull || exit "$?"
+
+	for f in go.mod go.sum vendor Dockerfile; do
+		[ -e "$f" ] && git add "$f"
+	done
+
+	git commit -m'upgo (not reviewed)' || exit "$?"
+	if [[ "$push" == 1 ]]; then git push; fi
+fi
