@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+MAGICKCMD="+append" "$(dirname "$0")/simplescan-joinappend" "$@"

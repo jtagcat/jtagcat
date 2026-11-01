@@ -1,11 +1,29 @@
 #!/usr/bin/env bash
 set -eo pipefail
 
-if [[ "$#" -ne 1 ]]; then
-	echo "ERROR: expected exactly 1 arg"
-	echo "USAGE: $0 <input directory>"
-	exit 1
-fi
+MAGICKCMD="${MAGICKCMD:=-append}"
+
+case "$#" in
+	0)
+		echo "ERROR: expected 1 or 2+ arguments"
+		echo "USAGE: $0 <input directory> # deletes originals"
+		echo "USAGE: $0 <insertable file...> # keeps originals"
+		exit 1
+		;;
+	1)
+		continue
+		;;
+	*)
+		base="$(revcut -d. -f2- <<< "$1")"
+		ext="$(revcut -d. -f1 <<< "$1")"
+
+		out="$base-joined.$ext"
+		echo "$out"
+
+		magick "$@" "$MAGICKCMD" "$out"
+		exit "$?"
+		;;
+esac
 
 for ext in png webp jpg; do
 if compgen -G "$1/*-1.$ext" > /dev/null; then
@@ -18,7 +36,7 @@ if compgen -G "$1/*-1.$ext" > /dev/null; then
 			continue
 		fi
 
-		magick "$base"-*."$ext" -append "$base"."$ext"
+		magick "$base"-*."$ext" "$MAGICKCMD" "$base"."$ext"
 
 		touch -r "$i" "$base"."$ext"
 		rm "$base"-*."$ext"
