@@ -45,6 +45,7 @@ case "$1" in
 		pidof -q slurp || grim -g "$(slurp)" - | wl-copy
 		;;
 	alt)
+		sleep 1 # alt shows toolbars in applications, hotfix trying to avoid it
 		grim - | wl-copy #TODO:
 		;;
 	ctrl)
