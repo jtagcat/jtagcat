@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+DELETE_ORIGINAL=1 "$(dirname "$0")/ffmpeg-to-mp3" "$@"

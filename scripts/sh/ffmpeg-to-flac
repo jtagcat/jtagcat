@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+CONVERT_TO=flac "$(dirname "$0")/ffmpeg-to-mp3" "$@"

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+if [[ "$#" == 0 ]]; then
+	echo "USAGE: $0 [input file...]"
+	exit 64
+fi
+
+CONVERT_TO="${CONVERT_TO:-mp3}"
+
+for input in "$@"; do
+	if [[ "$(revcut -d. -f1 <<< "$input")" == "$CONVERT_TO" ]]; then
+		continue
+	fi
+
+	tmp="$(mktemp).png"
+	ffmpeg -i "$input" -vf thumbnail=100 -frames:v 1 -q:v 2 "$tmp"
+
+	out="$(exteat <<< "$input").CONVERT_TO"
+	ffmpeg -i "$1" -i "$tmp" -map 0:a -map 1:v "$out"
+
+	rm "$tmp"
+
+	if [[ "$DELETE_ORIGINAL" == 1 ]]; then
+		rm "$input"
+	fi
+done
