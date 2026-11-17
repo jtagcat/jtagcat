@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+
+pkill -CONT -x keepassxc 2>/dev/null || true
+
+if swaymsg -t get_tree | grep -q '"app_id": "org.keepassxc.KeePassXC"'; then
+	swaymsg '[app_id="keepassxc"] kill'
+	return
+fi
+
+keepassxc
