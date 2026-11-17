@@ -1,7 +1,8 @@
 #!/bin/bash
 set -euo pipefail
 
-case "$(swaymsg -t get_inputs | jq -r 'map(select(has("xkb_active_layout_name")))[0].xkb_active_layout_name')" in
+input="$(swaymsg -t get_inputs | jq -r 'map(select(has("xkb_active_layout_name")))[0].xkb_active_layout_name')"
+case "$input" in
 	"Estonian (no dead keys)")
 		;;
 	"Russian (Sweden, phonetic)")
@@ -10,7 +11,10 @@ case "$(swaymsg -t get_inputs | jq -r 'map(select(has("xkb_active_layout_name"))
 	"English (US)")
 		echo "[en]"
 		;;
+	"Czech"*)
+		echo "[cz]"
+		;;
 	*)
-		echo "[kbd?]"
+		echo "[kbd?] $input"
 		;;
 esac
