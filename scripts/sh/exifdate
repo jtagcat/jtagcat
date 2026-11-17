@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -eou pipefail
+
+NOHEAD="${NOHEAD:-0}"
+
+#aigen:
+all_same_dir() {
+  local first="" arg dir
+  for arg in "$@"; do
+    dir=$(realpath "$(dirname "$arg")" 2>/dev/null) || return 1
+    if [[ -z "$first" ]]; then
+      first="$dir"
+    elif [[ "$dir" != "$first" ]]; then
+      echo "-FilePath"
+      return
+    fi
+  done
+
+  echo "-Filename"
+  return
+}
+
+[[ "$NOHEAD" == 0 ]] && printf 'File Name\tFile Modification\t\t\e[1mOriginal\e[0m\t\tDigitized\t\tCamera\t\tModifyDate\n'
+exiftool -T "$(all_same_dir)" -FileModifyDate -DateTimeOriginal -CreateDate -CameraDateTime -ModifyDate "$@"
